@@ -2,7 +2,7 @@
 
 Personal portfolio site for Aashish Chhabra — Senior Lead DevOps & Big Data Platform Engineer.
 
-Single-page site built with plain HTML, CSS, and JavaScript — no frameworks, no build step. Everything lives in `index.html`.
+Single-page site built with plain HTML, CSS, and JavaScript — no build step, no local dependencies. Everything lives in `index.html`. The one exception is [Three.js](https://threejs.org/) (r128, loaded via `<script>` tags from jsDelivr) which drives the interactive 3D node cluster in the hero; if it fails to load, the hero gracefully falls back to a lightweight 2D canvas animation.
 
 ## Local preview
 
@@ -28,6 +28,15 @@ Point your domain's DNS records at GitHub Pages:
 
 - `A` records for the apex domain (`aashishc.dev`) → GitHub Pages IPs (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`)
 - Or a `CNAME` record if using a `www` subdomain, pointing to `<username>.github.io`
+
+## Features
+
+- 3D interactive node-cluster hero (Three.js + OrbitControls) — drag to rotate, click amber nodes for stats
+- Working terminal ("Command Center") — explore experience, stack, and projects via real shell commands
+- Draggable career timeline scrubber with an animated growth metric
+- Expandable project case-study cards
+- Filterable tech stack, animated skill radar chart, scroll reveals throughout
+- Placeholder cards in the footer for future `blog.aashishc.dev` / video subdomains
 
 ## Structure
 
