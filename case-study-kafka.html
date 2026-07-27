@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafka-as-a-Service — Case Study | Aashish Chhabra</title>
+<meta name="description" content="How I architected a dual-authenticated, self-service Kafka platform on Airtel Public Cloud — Kerberos + SCRAM auth, Cruise Control rebalancing, and real-time observability.">
+<link rel="canonical" href="https://aashishc.dev/case-study-kafka.html">
+<script>
+  (function(){
+    try {
+      var saved = localStorage.getItem('theme');
+      var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e){}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070D1A; --surface:#0E1A2E; --border:#1A2F4A; --cyan:#00C8F0; --amber:#FF8C42;
+    --text:#E8F4F8; --muted:#6B8FA8; --nav-bg:rgba(7,13,26,0.55);
+  }
+  :root[data-theme="light"]{
+    --bg:#F4F7FB; --surface:#FFFFFF; --border:#D8E3EF; --cyan:#0089AD; --amber:#C15F00;
+    --text:#101826; --muted:#54677D; --nav-bg:rgba(244,247,251,0.75);
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
+    font-weight:400; line-height:1.7; overflow-x:hidden; transition:background-color .3s ease, color .3s ease;
+  }
+  h1,h2,h3{ margin:0; font-family:'Space Grotesk',sans-serif; }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  :focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+  .container{ max-width:900px; margin:0 auto; padding:0 24px; }
+
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between; padding:18px 24px;
+    background:var(--nav-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(26,47,74,0.6);
+  }
+  .nav__back{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--cyan); }
+  .theme-toggle{
+    background:none; border:1px solid var(--border); border-radius:6px; padding:6px 9px;
+    color:var(--muted); font-size:14px; line-height:1; transition:all .2s ease;
+  }
+  .theme-toggle:hover{ border-color:var(--cyan); color:var(--cyan); }
+
+  main{ padding:120px 0 80px; }
+
+  .cs-kicker{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--cyan); letter-spacing:1px;
+    text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .cs-title{ font-size:34px; font-weight:700; letter-spacing:-0.5px; margin-bottom:14px; }
+  @media (min-width:768px){ .cs-title{ font-size:46px; } }
+  .cs-subtitle{ font-size:17px; color:var(--muted); margin-bottom:24px; max-width:640px; }
+  .cs-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:56px; }
+  .cs-tag{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text);
+    border:1px solid var(--border); border-radius:4px; padding:5px 11px; background:var(--surface);
+  }
+
+  section.cs-block{ margin-bottom:56px; }
+  .cs-h2{ font-size:24px; font-weight:600; margin-bottom:16px; }
+  .cs-body{ color:var(--text); font-size:15.5px; margin-bottom:14px; }
+  .cs-body:last-child{ margin-bottom:0; }
+  .cs-body strong{ color:var(--amber); }
+
+  /* ---------- Architecture diagram ---------- */
+  .diagram-wrap{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px;
+    margin-bottom:20px;
+  }
+  #archSvg{ width:100%; height:auto; display:block; }
+  .arch-node{ cursor:pointer; }
+  .arch-node rect{ transition:stroke .2s ease, fill .2s ease; }
+  .arch-node:hover rect{ stroke:var(--cyan); }
+  .arch-node.is-active rect{ stroke:var(--amber); stroke-width:2; }
+  .arch-node text{ pointer-events:none; }
+  .arch-hint{ font-size:12px; color:var(--muted); margin-bottom:16px; }
+
+  .detail-panel{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--cyan);
+    border-radius:6px; padding:22px 24px; min-height:110px; transition:border-color .2s ease;
+  }
+  .detail-panel__title{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:var(--amber); margin-bottom:8px; }
+  .detail-panel__body{ font-size:14.5px; color:var(--text); }
+
+  .cs-list{ margin:0; padding:0; list-style:none; }
+  .cs-list li{ position:relative; padding-left:20px; margin-bottom:10px; font-size:15px; color:var(--text); }
+  .cs-list li::before{ content:'▸'; position:absolute; left:0; color:var(--cyan); }
+
+  .cs-impact{ display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width:640px){ .cs-impact{ grid-template-columns:repeat(3,1fr); } }
+  .cs-impact__tile{ background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--amber); border-radius:6px; padding:18px; }
+  .cs-impact__label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:1px; margin-bottom:8px; display:block; }
+  .cs-impact__value{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; color:var(--amber); }
+
+  .cs-footer{ text-align:center; padding:40px 0; border-top:1px solid var(--border); margin-top:20px; }
+  .cs-footer a{ color:var(--cyan); font-family:'JetBrains Mono',monospace; font-size:13px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html#projects" class="nav__back mono">← aashishc.dev</a>
+  <button class="theme-toggle mono" id="themeToggle" aria-label="Toggle light/dark theme">◐</button>
+</nav>
+
+<main>
+  <div class="container">
+    <span class="cs-kicker">Case Study</span>
+    <h1 class="cs-title">Kafka-as-a-Service</h1>
+    <p class="cs-subtitle">Designing a self-service, dual-authenticated Kafka platform on Airtel Public Cloud — so product teams get a messaging backbone without each one operating its own cluster.</p>
+    <div class="cs-tags">
+      <span class="cs-tag">Apache Kafka</span>
+      <span class="cs-tag">Kerberos + SCRAM</span>
+      <span class="cs-tag">Cruise Control</span>
+      <span class="cs-tag">Grafana · Kafka UI · Telegram</span>
+    </div>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">The problem</h2>
+      <p class="cs-body">Individual teams across Airtel's data platform needed a reliable event backbone, but standing up and operating a production-grade Kafka cluster per team is slow, inconsistent, and a poor use of specialist time. Some teams needed strict Kerberos-based auth tied into existing Active Directory; others just needed a simple username/password (SCRAM) client with no AD dependency. Whatever we built had to serve both without forking the platform in two.</p>
+      <p class="cs-body">I owned the architecture end to end: authentication, cluster operations, rebalancing, and the observability that keeps it on-call-friendly.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">Architecture</h2>
+      <p class="arch-hint">Click a component to see what it does.</p>
+      <div class="diagram-wrap">
+        <div id="archSvg"></div>
+      </div>
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-panel__title" id="detailTitle">Kafka-as-a-Service</div>
+        <div class="detail-panel__body" id="detailBody">A managed Kafka platform offered internally on Airtel Public Cloud. Click any box above to explore how a message actually moves through the system — from producer to broker to consumer, with auth, rebalancing, and observability wrapped around it.</div>
+      </div>
+    </section>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">Design decisions</h2>
+      <p class="cs-body"><strong>Dual authentication, one cluster.</strong> Rather than run separate clusters per auth scheme, I configured the brokers to accept both Kerberos (SASL/GSSAPI, tied into Active Directory for internal services already AD-joined) and SCRAM (SASL/SCRAM, for external or simpler clients that shouldn't need AD integration) on separate listener ports. One cluster, two front doors — teams pick whichever fits their environment instead of the platform dictating it.</p>
+      <p class="cs-body"><strong>Automated rebalancing with Cruise Control.</strong> As more teams onboarded, partition placement drifted and a handful of brokers started running hot. Rather than rebalance manually — risky and easy to get wrong on a live cluster — I deployed Cruise Control to continuously monitor broker load and execute safe, incremental partition moves, keeping the cluster balanced as usage patterns changed.</p>
+      <p class="cs-body"><strong>Observability as a first-class citizen, not an afterthought.</strong> A shared platform lives or dies by whether the on-call engineer can tell what's wrong at 2am. I built custom Grafana dashboards for broker/topic/consumer-lag metrics, wired in Kafka UI for day-to-day topic and ACL inspection, and routed critical alerts to Telegram so the team gets paged wherever they are, not just when someone happens to be looking at a dashboard.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">Outcomes</h2>
+      <div class="cs-impact">
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">AUTH MODEL</span>
+          <div class="cs-impact__value">Kerberos + SCRAM, one cluster</div>
+        </div>
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">REBALANCING</span>
+          <div class="cs-impact__value">Automated via Cruise Control</div>
+        </div>
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">OBSERVABILITY</span>
+          <div class="cs-impact__value">Grafana + Kafka UI + Telegram</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cs-footer">
+      <a href="index.html#projects">← Back to all projects on aashishc.dev</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var themeToggle = document.getElementById('themeToggle');
+  function currentTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+  function updateThemeButton(){
+    themeToggle.textContent = currentTheme() === 'light' ? '◑' : '◐';
+    themeToggle.setAttribute('aria-label', currentTheme() === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+  }
+  themeToggle.addEventListener('click', function(){
+    var next = currentTheme() === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch(e){}
+    updateThemeButton();
+  });
+  updateThemeButton();
+
+  var nodes = [
+    { id:'observability', x:170, y:10, w:330, h:40, label:['Observability — Grafana · Kafka UI · Telegram'], title:'Observability — Grafana · Kafka UI · Telegram', body:'Custom Grafana dashboards for broker/topic/consumer-lag metrics, Kafka UI for day-to-day topic and ACL inspection, and Telegram alerting so the on-call engineer gets paged wherever they are.' },
+    { id:'zookeeper', x:340, y:65, w:160, h:35, label:['Zookeeper'], title:'Zookeeper', body:'Handles cluster coordination, broker metadata, and controller election — the coordination layer the broker cluster depends on.' },
+    { id:'producers', x:20, y:140, w:110, h:50, label:['Producers'], title:'Producers', body:'Business applications and services publishing events — order updates, usage records, telemetry — into the platform. Producers authenticate via whichever scheme their environment supports.' },
+    { id:'auth', x:170, y:140, w:130, h:50, label:['Auth Gateway'], title:'Auth Gateway — Kerberos + SCRAM', body:'Two SASL listeners on the same brokers: Kerberos (GSSAPI) for AD-joined internal services, SCRAM for external or simpler clients. One cluster serves both without forking the platform.' },
+    { id:'brokers', x:340, y:125, w:160, h:80, label:['Kafka Broker','Cluster'], title:'Kafka Broker Cluster', body:'The core of the platform. Topics are partitioned and replicated across brokers for durability and throughput, with per-team quotas to keep noisy neighbours in check.' },
+    { id:'consumers', x:540, y:140, w:110, h:50, label:['Consumers'], title:'Consumers', body:'Downstream services and data pipelines reading from topics — including the Elastic Stack and Trino for analytics, and business services reacting to events in real time.' },
+    { id:'cruise', x:340, y:230, w:160, h:45, label:['Cruise Control'], title:'Cruise Control', body:'Continuously monitors per-broker load and executes safe, incremental partition reassignments — keeping the cluster balanced automatically as usage patterns shift, instead of manual rebalancing on a live system.' }
+  ];
+
+  var edges = [
+    ['producers','auth'], ['auth','brokers'], ['brokers','consumers'],
+    ['zookeeper','brokers'], ['cruise','brokers'], ['observability','brokers']
+  ];
+
+  function buildDiagram(){
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 680 290');
+    svg.setAttribute('width', '100%');
+
+    var cyan = getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim() || '#00C8F0';
+    var border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#1A2F4A';
+    var surface = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#0E1A2E';
+    var textColor = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#E8F4F8';
+
+    function centerOf(n){ return { x: n.x + n.w/2, y: n.y + n.h/2 }; }
+    function byId(id){ return nodes.filter(function(n){ return n.id === id; })[0]; }
+
+    edges.forEach(function(e){
+      var a = centerOf(byId(e[0])), b = centerOf(byId(e[1]));
+      var line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+      line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+      line.setAttribute('stroke', border);
+      line.setAttribute('stroke-width', '1.5');
+      svg.appendChild(line);
+    });
+
+    nodes.forEach(function(n){
+      var g = document.createElementNS(svgNS, 'g');
+      g.setAttribute('class', 'arch-node');
+      g.setAttribute('data-id', n.id);
+      g.setAttribute('tabindex', '0');
+      g.setAttribute('role', 'button');
+      g.setAttribute('aria-label', n.title);
+
+      var rect = document.createElementNS(svgNS, 'rect');
+      rect.setAttribute('x', n.x); rect.setAttribute('y', n.y);
+      rect.setAttribute('width', n.w); rect.setAttribute('height', n.h);
+      rect.setAttribute('rx', 7);
+      rect.setAttribute('fill', surface);
+      rect.setAttribute('stroke', border);
+      rect.setAttribute('stroke-width', '1.5');
+      g.appendChild(rect);
+
+      n.label.forEach(function(line, li){
+        var text = document.createElementNS(svgNS, 'text');
+        text.setAttribute('x', n.x + n.w/2);
+        text.setAttribute('y', n.y + n.h/2 + (li - (n.label.length-1)/2) * 13 + 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-family', 'JetBrains Mono, monospace');
+        text.setAttribute('font-size', '11');
+        text.setAttribute('fill', textColor);
+        text.textContent = line;
+        g.appendChild(text);
+      });
+
+      function activate(){
+        document.querySelectorAll('.arch-node').forEach(function(el){ el.classList.remove('is-active'); });
+        g.classList.add('is-active');
+        document.getElementById('detailTitle').textContent = n.title;
+        document.getElementById('detailBody').textContent = n.body;
+      }
+      g.addEventListener('click', activate);
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); } });
+
+      svg.appendChild(g);
+    });
+
+    var container = document.getElementById('archSvg');
+    container.innerHTML = '';
+    container.appendChild(svg);
+  }
+  buildDiagram();
+  themeToggle.addEventListener('click', function(){ setTimeout(buildDiagram, 20); });
+})();
+</script>
+
+</body>
+</html>
