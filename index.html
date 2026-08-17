@@ -663,7 +663,7 @@
         <div class="stack-group__badges">
           <span class="badge" data-note="Scaled 20 → 400+ node production cluster">Cloudera CDH/CDP</span>
           <span class="badge" data-note="Multiple HDP clusters at NCR">HDP</span>
-          <span class="badge" data-note="Kafka-as-a-Service for Airtel, kernel-tuned for nationwide streaming">Apache Kafka</span>
+          <span class="badge" data-note="Kafka Platform for Airtel, kernel-tuned for nationwide streaming">Apache Kafka</span>
           <span class="badge" data-note="DDL/DML pipelines across Hadoop layers">Apache Hive</span>
           <span class="badge" data-note="MySQL/Oracle → Hadoop ingestion">SQOOP</span>
           <span class="badge" data-note="Deployed on OpenShift for Kubernetes-native Spark">Spark Operator</span>
@@ -779,13 +779,13 @@
       <div class="project-card reveal" data-project="kafka">
         <button class="project-card__head" aria-expanded="false">
           <div class="project-card__icon" role="img" aria-label="Incoming envelope">📨</div>
-          <div class="project-card__title">Kafka-as-a-Service <span class="project-card__expand-icon">+</span></div>
+          <div class="project-card__title">Kafka Platform <span class="project-card__expand-icon">+</span></div>
           <p class="project-card__desc">Designed and stabilised managed Kafka for Airtel</p>
           <span class="project-card__impact-label">IMPACT</span>
           <div class="project-card__impact">Dual auth · Kernel-tuned bare metal · Cruise Control</div>
         </button>
         <div class="project-card__panel">
-          <p>Designed and stabilised Kafka-as-a-Service for Airtel — dual Kerberos/SCRAM authentication, kernel-tuned bare-metal brokers built to carry high-speed streaming traffic from across India, Cruise Control for rebalancing, and real-time observability via Grafana, Kafka UI, and Telegram alerting.</p>
+          <p>Designed and stabilised a Kafka platform for Airtel — dual Kerberos/SCRAM authentication, kernel-tuned bare-metal brokers built to carry high-speed streaming traffic from across India, Cruise Control for rebalancing, and real-time observability via Grafana, Kafka UI, and Telegram alerting.</p>
           <a href="case-study-kafka.html" class="case-study-link mono">Read the full case study ↗</a>
         </div>
       </div>
@@ -1007,7 +1007,7 @@
     { label: 'Open LinkedIn', hint: '↗ new tab', run: function(){ window.open('https://www.linkedin.com/in/aashishchhabra', '_blank', 'noopener'); } },
     { label: 'Toggle light / dark theme', hint: function(){ return currentTheme() === 'light' ? '→ dark' : '→ light'; }, run: function(){ themeToggle.click(); } },
     { label: 'Download résumé (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume.pdf', '_blank', 'noopener'); } },
-    { label: 'Read the Kafka-as-a-Service case study', hint: '↗ deep dive', run: function(){ window.open('case-study-kafka.html', '_blank', 'noopener'); } }
+    { label: 'Read the Kafka Platform case study', hint: '↗ deep dive', run: function(){ window.open('case-study-kafka.html', '_blank', 'noopener'); } }
   ];
 
   function scrollToId(id){
@@ -1398,7 +1398,7 @@
           'Xtelify (Airtel Digital / Bharti Airtel Limited) — Senior Lead Engineer, Data Techops',
           '  • Scaled production Cloudera cluster from 20 to 400+ Datanodes (19 PB)',
           '  • Led CDH 5.8 → CDP 7.1.6 migration with zero business downtime',
-          '  • Architected and stabilised Kafka-as-a-Service for Airtel on kernel-tuned bare metal',
+          '  • Architected and stabilised a Kafka platform for Airtel on kernel-tuned bare metal',
           '  • Migrated microservices fleet: Docker Swarm → OpenShift',
           '  • Led DevSecOps initiative: BlackDuck, Coverity, Prisma Cloud'
         ];
@@ -1439,7 +1439,7 @@
       return [
         'Cloudera Scale-Up        20 → 400+ Datanodes · 19 PB',
         'CDH → CDP Migration      CDH 5.8 → CDP 7.1.6, zero downtime',
-        'Kafka-as-a-Service       Dual auth · Cruise Control · real-time alerting',
+        'Kafka Platform           Dual auth · kernel-tuned bare metal · Cruise Control',
         'Container Migration      Docker Swarm → OpenShift OCP',
         'Full-Stack Observability ELK + APM + Fleet + Synthetics',
         'CI/CD Framework          Pluggable, multi-language, security by default',
@@ -1689,7 +1689,7 @@
     { year:'2014', company:'Tech Mahindra Ltd., Pune', role:'Software Engineer', period:'Jun 2014 – Dec 2017', note:'First contact with Big Data — HDFS migration POCs, SQOOP pipelines, Hive & PIG Latin scripts, plus MySQL/SQL Server engineering.', tag:'3.5 yrs foundation', metric:null },
     { year:'2018', company:'NCR Corporation, Gurugram', role:'Senior Software Engineer', period:'Jan 2018 – Sep 2019', note:'Owned Hortonworks (HDP) clusters end-to-end — YARN, Ranger, Hive, Knox, Kerberos/AD integration, 24/7 on-call.', tag:'1 yr 9 mo', metric:null },
     { year:'2019', company:'Xtelify (Airtel)', role:'Senior Lead Engineer joins Data Techops', period:'Sep 2019 — onward', note:'Inherited a 20-node Cloudera cluster and a small DevOps footprint.', tag:'20 nodes → today', metric:20 },
-    { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers. CDH→CDP migration, Kafka-as-a-Service, OpenShift fleet migration, full-stack observability, pluggable multi-language CI/CD with security gates developers can\'t bypass.', tag:'400+ nodes', metric:400 }
+    { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers. CDH→CDP migration, Kafka platform, OpenShift fleet migration, full-stack observability, pluggable multi-language CI/CD with security gates developers can\'t bypass.', tag:'400+ nodes', metric:400 }
   ];
 
   var scrubRange = document.getElementById('scrubRange');

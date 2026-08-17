@@ -40,7 +40,7 @@ There's currently **no `CNAME` file** in the repo, on purpose — the `aashishc.
 - Working terminal ("Command Center") — explore experience, stack, and projects via real shell commands
 - Simulated ops telemetry widget (clearly labeled illustrative, not real production data)
 - Draggable career timeline scrubber with an animated growth metric
-- Expandable project case-study cards, including a full deep-dive page for Kafka-as-a-Service
+- Expandable project case-study cards, including a full deep-dive page for the Kafka Platform build
 - Filterable tech stack, animated skill radar chart, scroll reveals throughout
 - Light/dark theme toggle (persisted, defaults to system preference)
 - Command palette (`⌘K` / `Ctrl+K`) — jump to any section or run an action from the keyboard
@@ -52,7 +52,7 @@ There's currently **no `CNAME` file** in the repo, on purpose — the `aashishc.
 ## Structure
 
 - `index.html` — the main single-page site (HTML/CSS/JS inline)
-- `case-study-kafka.html` — deep-dive case study for the Kafka-as-a-Service project, with an interactive architecture diagram
+- `case-study-kafka.html` — deep-dive case study for the Kafka Platform project, with an interactive architecture diagram
 - `Aashish-Chhabra-Resume.pdf` — downloadable résumé (generated with reportlab; regenerate if site content changes)
 - `og-image.png` — social share preview image (1200×630)
 - `README.md` — this file
