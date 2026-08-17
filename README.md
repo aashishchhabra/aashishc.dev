@@ -19,12 +19,17 @@ python3 -m http.server 8000
 2. In the repo, go to **Settings → Pages**.
 3. Under **Build and deployment → Source**, choose **Deploy from a branch**.
 4. Branch: `main`, folder: `/ (root)`. Save.
-5. Under **Custom domain**, enter `aashishc.dev` and save (this reads the `CNAME` file already in the repo).
-6. Once DNS propagates, check **Enforce HTTPS**.
+5. The site is now live at `https://<username>.github.io/aashishc.dev/`.
 
-### DNS
+There's currently **no `CNAME` file** in the repo, on purpose — the `aashishc.dev` domain isn't registered/pointed yet. GitHub Pages redirects the default `github.io` URL to whatever custom domain a `CNAME` file specifies, so adding one before DNS is configured would break the live site. Once the domain is ready:
 
-Point your domain's DNS records at GitHub Pages:
+1. Add a `CNAME` file back at the repo root containing just `aashishc.dev`.
+2. Point the domain's DNS at GitHub Pages (see below).
+3. In **Settings → Pages → Custom domain**, enter `aashishc.dev` and save.
+4. Once DNS propagates, check **Enforce HTTPS**.
+5. Update the `og:url` / `canonical` / `og:image` / `twitter:image` URLs in `index.html` and `case-study-kafka.html` from the `github.io` URL to `https://aashishc.dev/`.
+
+### DNS (once you have the domain)
 
 - `A` records for the apex domain (`aashishc.dev`) → GitHub Pages IPs (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`)
 - Or a `CNAME` record if using a `www` subdomain, pointing to `<username>.github.io`
@@ -50,5 +55,6 @@ Point your domain's DNS records at GitHub Pages:
 - `case-study-kafka.html` — deep-dive case study for the Kafka-as-a-Service project, with an interactive architecture diagram
 - `Aashish-Chhabra-Resume.pdf` — downloadable résumé (generated with reportlab; regenerate if site content changes)
 - `og-image.png` — social share preview image (1200×630)
-- `CNAME` — custom domain for GitHub Pages
 - `README.md` — this file
+
+Note: there is no `CNAME` file right now — see **Deployment** above for why, and how to add it back once the domain is ready.
