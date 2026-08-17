@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kafka-as-a-Service — Case Study | Aashish Chhabra</title>
-<meta name="description" content="How I architected a dual-authenticated, self-service Kafka platform on Airtel Public Cloud — Kerberos + SCRAM auth, Cruise Control rebalancing, and real-time observability.">
+<meta name="description" content="How I architected and stabilised a dual-authenticated, self-service Kafka platform for Airtel — kernel-tuned bare-metal brokers for nationwide streaming, Kerberos + SCRAM auth, Cruise Control rebalancing, and real-time observability.">
 <link rel="canonical" href="https://aashishchhabra.github.io/aashishc.dev/case-study-kafka.html">
 <script>
   (function(){
@@ -99,7 +99,8 @@
   .cs-list li::before{ content:'▸'; position:absolute; left:0; color:var(--cyan); }
 
   .cs-impact{ display:grid; grid-template-columns:1fr; gap:14px; }
-  @media (min-width:640px){ .cs-impact{ grid-template-columns:repeat(3,1fr); } }
+  @media (min-width:640px){ .cs-impact{ grid-template-columns:repeat(2,1fr); } }
+  @media (min-width:900px){ .cs-impact{ grid-template-columns:repeat(4,1fr); } }
   .cs-impact__tile{ background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--amber); border-radius:6px; padding:18px; }
   .cs-impact__label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:1px; margin-bottom:8px; display:block; }
   .cs-impact__value{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; color:var(--amber); }
@@ -123,9 +124,10 @@
   <div class="container">
     <span class="cs-kicker">Case Study</span>
     <h1 class="cs-title">Kafka-as-a-Service</h1>
-    <p class="cs-subtitle">Designing a self-service, dual-authenticated Kafka platform on Airtel Public Cloud — so product teams get a messaging backbone without each one operating its own cluster.</p>
+    <p class="cs-subtitle">Designing and stabilising a self-service, dual-authenticated Kafka platform for Airtel — kernel-tuned bare-metal brokers carrying high-speed streaming traffic from across India, so product teams get a messaging backbone without each one operating its own cluster.</p>
     <div class="cs-tags">
       <span class="cs-tag">Apache Kafka</span>
+      <span class="cs-tag">Bare Metal · Kernel Tuning</span>
       <span class="cs-tag">Kerberos + SCRAM</span>
       <span class="cs-tag">Cruise Control</span>
       <span class="cs-tag">Grafana · Kafka UI · Telegram</span>
@@ -134,7 +136,8 @@
     <section class="cs-block">
       <h2 class="cs-h2">The problem</h2>
       <p class="cs-body">Individual teams across Airtel's data platform needed a reliable event backbone, but standing up and operating a production-grade Kafka cluster per team is slow, inconsistent, and a poor use of specialist time. Some teams needed strict Kerberos-based auth tied into existing Active Directory; others just needed a simple username/password (SCRAM) client with no AD dependency. Whatever we built had to serve both without forking the platform in two.</p>
-      <p class="cs-body">I owned the architecture end to end: authentication, cluster operations, rebalancing, and the observability that keeps it on-call-friendly.</p>
+      <p class="cs-body">The traffic itself was the harder problem. Producers were streaming in from across India at volumes that exposed default OS network settings as the real bottleneck, long before broker count was. Stabilising the platform meant going deeper than the JVM — into the kernel of the bare-metal hosts underneath it.</p>
+      <p class="cs-body">I owned the architecture end to end: authentication, cluster operations, kernel-level stability tuning, rebalancing, and the observability that keeps it on-call-friendly.</p>
     </section>
 
     <section class="cs-block">
@@ -145,12 +148,13 @@
       </div>
       <div class="detail-panel" id="detailPanel">
         <div class="detail-panel__title" id="detailTitle">Kafka-as-a-Service</div>
-        <div class="detail-panel__body" id="detailBody">A managed Kafka platform offered internally on Airtel Public Cloud. Click any box above to explore how a message actually moves through the system — from producer to broker to consumer, with auth, rebalancing, and observability wrapped around it.</div>
+        <div class="detail-panel__body" id="detailBody">A managed Kafka platform offered internally at Airtel, running on kernel-tuned bare-metal brokers built to absorb high-speed streaming traffic from across India. Click any box above to explore how a message actually moves through the system — from producer to broker to consumer, with auth, rebalancing, and observability wrapped around it.</div>
       </div>
     </section>
 
     <section class="cs-block">
       <h2 class="cs-h2">Design decisions</h2>
+      <p class="cs-body"><strong>Kernel-tuned bare metal, not just more brokers.</strong> Streaming ingestion at that speed turned out to be a network-stack problem before it was a Kafka problem. I tuned kernel-level network buffers, NIC interrupt (IRQ) affinity, and file descriptor limits on the bare-metal hosts to sustain high-throughput streaming from producers scattered across India — stabilising the cluster instead of over-provisioning hardware to paper over a tuning problem.</p>
       <p class="cs-body"><strong>Dual authentication, one cluster.</strong> Rather than run separate clusters per auth scheme, I configured the brokers to accept both Kerberos (SASL/GSSAPI, tied into Active Directory for internal services already AD-joined) and SCRAM (SASL/SCRAM, for external or simpler clients that shouldn't need AD integration) on separate listener ports. One cluster, two front doors — teams pick whichever fits their environment instead of the platform dictating it.</p>
       <p class="cs-body"><strong>Automated rebalancing with Cruise Control.</strong> As more teams onboarded, partition placement drifted and a handful of brokers started running hot. Rather than rebalance manually — risky and easy to get wrong on a live cluster — I deployed Cruise Control to continuously monitor broker load and execute safe, incremental partition moves, keeping the cluster balanced as usage patterns changed.</p>
       <p class="cs-body"><strong>Observability as a first-class citizen, not an afterthought.</strong> A shared platform lives or dies by whether the on-call engineer can tell what's wrong at 2am. I built custom Grafana dashboards for broker/topic/consumer-lag metrics, wired in Kafka UI for day-to-day topic and ACL inspection, and routed critical alerts to Telegram so the team gets paged wherever they are, not just when someone happens to be looking at a dashboard.</p>
@@ -159,6 +163,10 @@
     <section class="cs-block">
       <h2 class="cs-h2">Outcomes</h2>
       <div class="cs-impact">
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">INFRASTRUCTURE</span>
+          <div class="cs-impact__value">Kernel-tuned bare metal, nationwide streaming</div>
+        </div>
         <div class="cs-impact__tile">
           <span class="cs-impact__label">AUTH MODEL</span>
           <div class="cs-impact__value">Kerberos + SCRAM, one cluster</div>
@@ -202,7 +210,7 @@
     { id:'zookeeper', x:340, y:65, w:160, h:35, label:['Zookeeper'], title:'Zookeeper', body:'Handles cluster coordination, broker metadata, and controller election — the coordination layer the broker cluster depends on.' },
     { id:'producers', x:20, y:140, w:110, h:50, label:['Producers'], title:'Producers', body:'Business applications and services publishing events — order updates, usage records, telemetry — into the platform. Producers authenticate via whichever scheme their environment supports.' },
     { id:'auth', x:170, y:140, w:130, h:50, label:['Auth Gateway'], title:'Auth Gateway — Kerberos + SCRAM', body:'Two SASL listeners on the same brokers: Kerberos (GSSAPI) for AD-joined internal services, SCRAM for external or simpler clients. One cluster serves both without forking the platform.' },
-    { id:'brokers', x:340, y:125, w:160, h:80, label:['Kafka Broker','Cluster'], title:'Kafka Broker Cluster', body:'The core of the platform. Topics are partitioned and replicated across brokers for durability and throughput, with per-team quotas to keep noisy neighbours in check.' },
+    { id:'brokers', x:340, y:125, w:160, h:80, label:['Kafka Broker','Cluster'], title:'Kafka Broker Cluster', body:'Kernel-tuned bare-metal hosts — network buffers, IRQ affinity, and file descriptor limits tuned to sustain high-speed streaming ingestion from producers across India. Topics are partitioned and replicated for durability and throughput, with per-team quotas to keep noisy neighbours in check.' },
     { id:'consumers', x:540, y:140, w:110, h:50, label:['Consumers'], title:'Consumers', body:'Downstream services and data pipelines reading from topics — including the Elastic Stack and Trino for analytics, and business services reacting to events in real time.' },
     { id:'cruise', x:340, y:230, w:160, h:45, label:['Cruise Control'], title:'Cruise Control', body:'Continuously monitors per-broker load and executes safe, incremental partition reassignments — keeping the cluster balanced automatically as usage patterns shift, instead of manual rebalancing on a live system.' }
   ];
