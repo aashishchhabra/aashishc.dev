@@ -533,7 +533,7 @@
     <h1 class="hero__name">AASHISH CHHABRA</h1>
     <p class="hero__subtitle">Senior Lead Engineer · Data &amp; Platform</p>
 
-    <p class="hero__ribbon mono">12+ Years<span class="sep">·</span>1,200+ Servers<span class="sep">·</span>19 PB Data<span class="sep">·</span>40+ Environments</p>
+    <p class="hero__ribbon mono">12+ Years<span class="sep">·</span>1,200+ Servers<span class="sep">·</span>19 PB Data</p>
     <p class="hero__hint" id="heroHint">drag to rotate the cluster · click an amber node to explore</p>
 
     <div class="hero__actions">
@@ -670,7 +670,7 @@
           <span class="badge" data-note="Deployed on Kubernetes with Kerberos auth">Trino</span>
           <span class="badge" data-note="Cluster resource management">YARN</span>
           <span class="badge" data-note="Coordination for Kafka & Hadoop">Zookeeper</span>
-          <span class="badge" data-note="CI/CD across 40+ environments">Apache Airflow</span>
+          <span class="badge" data-note="DAG-based orchestration & automation">Apache Airflow</span>
         </div>
       </div>
 
@@ -679,7 +679,7 @@
         <div class="stack-group__badges">
           <span class="badge" data-note="Automated deployment & housekeeping">Ansible</span>
           <span class="badge" data-note="Pipelines across every platform">Jenkins CI/CD</span>
-          <span class="badge" data-note="40+ Airflow environments">dbt Cosmos</span>
+          <span class="badge" data-note="Multi-language, pluggable, security gates enforced">Pluggable CI/CD Framework</span>
           <span class="badge" data-note="DevSecOps CI integration">BlackDuck</span>
           <span class="badge" data-note="Static analysis in CI">Coverity</span>
           <span class="badge" data-note="Cloud security scanning">Prisma Cloud</span>
@@ -816,16 +816,16 @@
         </div>
       </div>
 
-      <div class="project-card project-card--amber reveal" data-project="dbt">
+      <div class="project-card project-card--amber reveal" data-project="cicd">
         <button class="project-card__head" aria-expanded="false">
           <div class="project-card__icon" role="img" aria-label="Counterclockwise arrows">🔄</div>
-          <div class="project-card__title">CI/CD for dbt Cosmos <span class="project-card__expand-icon">+</span></div>
-          <p class="project-card__desc">Airflow-integrated pipeline standardisation</p>
+          <div class="project-card__title">CI/CD Framework <span class="project-card__expand-icon">+</span></div>
+          <p class="project-card__desc">Pluggable pipelines, multiple languages, one security bar</p>
           <span class="project-card__impact-label">IMPACT</span>
-          <div class="project-card__impact">40+ business team environments</div>
+          <div class="project-card__impact">Security gates developers can't bypass</div>
         </button>
         <div class="project-card__panel">
-          <p>Architected the CI/CD pipeline integrating dbt Cosmos projects across 40+ Airflow environments for different business teams.</p>
+          <p>Built and maintained a pluggable CI/CD framework supporting multiple languages, with DevSecOps checks (BlackDuck, Coverity, Prisma Cloud) enforced as mandatory pipeline gates — not optional steps a developer could skip.</p>
         </div>
       </div>
     </div>
@@ -1113,7 +1113,6 @@
     { label:'Years Experience', value:'12+' },
     { label:'Servers Managed', value:'1,200+' },
     { label:'Data Under Management', value:'19 PB' },
-    { label:'Airflow Environments', value:'40+' },
     { label:'Datanodes Scaled', value:'400+' }
   ];
 
@@ -1426,7 +1425,7 @@
     stack: function(arg){
       var groups = {
         bigdata: 'Cloudera CDH/CDP, HDP, Apache Kafka, Hive, SQOOP, Spark Operator, Trino, YARN, Zookeeper, Airflow',
-        devops: 'Ansible, Jenkins CI/CD, dbt Cosmos, BlackDuck, Coverity, Prisma Cloud, GitOps',
+        devops: 'Ansible, Jenkins CI/CD, Pluggable CI/CD Framework, BlackDuck, Coverity, Prisma Cloud, GitOps',
         cloud: 'OpenShift (OCP), Kubernetes, Docker Swarm, Docker, Microsoft Azure, Airtel Cloud',
         observability: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, Grafana, Kafka UI, OpenTelemetry',
         languages: 'Python, Pandas, Shell Scripting, MySQL, Oracle SQL, JupyterHub, Cluster Shell'
@@ -1443,7 +1442,7 @@
         'Kafka-as-a-Service       Dual auth · Cruise Control · real-time alerting',
         'Container Migration      Docker Swarm → OpenShift OCP',
         'Full-Stack Observability ELK + APM + Fleet + Synthetics',
-        'CI/CD for dbt Cosmos     40+ Airflow environments',
+        'CI/CD Framework          Pluggable, multi-language, security by default',
         '',
         'see the Impact section below — click a card for the full story.'
       ];
@@ -1690,7 +1689,7 @@
     { year:'2014', company:'Tech Mahindra Ltd., Pune', role:'Software Engineer', period:'Jun 2014 – Dec 2017', note:'First contact with Big Data — HDFS migration POCs, SQOOP pipelines, Hive & PIG Latin scripts, plus MySQL/SQL Server engineering.', tag:'3.5 yrs foundation', metric:null },
     { year:'2018', company:'NCR Corporation, Gurugram', role:'Senior Software Engineer', period:'Jan 2018 – Sep 2019', note:'Owned Hortonworks (HDP) clusters end-to-end — YARN, Ranger, Hive, Knox, Kerberos/AD integration, 24/7 on-call.', tag:'1 yr 9 mo', metric:null },
     { year:'2019', company:'Xtelify (Airtel)', role:'Senior Lead Engineer joins Data Techops', period:'Sep 2019 — onward', note:'Inherited a 20-node Cloudera cluster and a small DevOps footprint.', tag:'20 nodes → today', metric:20 },
-    { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers · 40+ Airflow environments. CDH→CDP migration, Kafka-as-a-Service, OpenShift fleet migration, full-stack observability, DevSecOps.', tag:'400+ nodes', metric:400 }
+    { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers. CDH→CDP migration, Kafka-as-a-Service, OpenShift fleet migration, full-stack observability, pluggable multi-language CI/CD with security gates developers can\'t bypass.', tag:'400+ nodes', metric:400 }
   ];
 
   var scrubRange = document.getElementById('scrubRange');
