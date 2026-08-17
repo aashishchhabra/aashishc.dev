@@ -1215,7 +1215,7 @@
       tooltip.style.top = pos.y + 'px';
     }
 
-    renderer.domElement.addEventListener('click', function(e){
+    function handleTap(e){
       setPointerFromEvent(e);
       raycaster.setFromCamera(pointer, camera);
       var hits = raycaster.intersectObjects(nodes);
@@ -1229,6 +1229,22 @@
         activeNode = null;
         tooltip.classList.remove('is-visible');
       }
+    }
+
+    // Pointer events (not 'click') so taps work on mobile: OrbitControls calls
+    // preventDefault() on touchstart to stop page scroll while rotating, which
+    // also suppresses the browser's synthetic click event after a tap. Pointer
+    // events aren't part of that suppressed set, so they fire regardless.
+    var pointerDownPos = null;
+    renderer.domElement.addEventListener('pointerdown', function(e){
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+    });
+    renderer.domElement.addEventListener('pointerup', function(e){
+      if (!pointerDownPos) return;
+      var dx = e.clientX - pointerDownPos.x, dy = e.clientY - pointerDownPos.y;
+      pointerDownPos = null;
+      if (Math.sqrt(dx * dx + dy * dy) > 6) return; // was a drag/rotate, not a tap
+      handleTap(e);
     });
 
     renderer.domElement.addEventListener('mousemove', function(e){
