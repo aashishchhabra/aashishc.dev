@@ -402,11 +402,12 @@
     position:relative; cursor:default;
   }
   .badge:hover{ border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 8px rgba(0,200,240,0.3); }
-  .badge[data-note]:hover::after{
+  .badge[data-note]:hover::after, .badge[data-note].is-active::after{
     content:attr(data-note);
     position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%);
     background:#050B15; border:1px solid var(--cyan); color:var(--text);
-    padding:6px 10px; border-radius:4px; font-size:11px; white-space:nowrap; z-index:6;
+    padding:6px 10px; border-radius:4px; font-size:11px; white-space:normal; z-index:6;
+    width:max-content; max-width:min(200px, calc(100vw - 32px));
     box-shadow:0 0 12px rgba(0,200,240,0.3);
   }
 
@@ -461,10 +462,10 @@
   .awards-col li{ position:relative; padding-left:20px; margin-bottom:10px; font-size:14.5px; color:var(--text); }
   .awards-col li::before{ content:''; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--amber); }
   .award-note{ position:relative; cursor:help; border-bottom:1px dotted var(--muted); }
-  .award-note:hover{ border-bottom-color:var(--cyan); color:var(--cyan); }
-  .award-note:hover::after{
+  .award-note:hover, .award-note.is-active{ border-bottom-color:var(--cyan); color:var(--cyan); }
+  .award-note:hover::after, .award-note.is-active::after{
     content:attr(data-note);
-    position:absolute; left:0; top:100%; margin-top:6px; width:220px; white-space:normal;
+    position:absolute; left:0; top:100%; margin-top:6px; width:220px; max-width:calc(100vw - 32px); white-space:normal;
     background:#050B15; border:1px solid var(--cyan); color:var(--text);
     padding:8px 10px; border-radius:4px; font-size:11.5px; line-height:1.5; z-index:6;
     box-shadow:0 0 12px rgba(0,200,240,0.3);
@@ -1163,6 +1164,22 @@
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(function(el){ revealObserver.observe(el); });
+
+  /* ---------- Tap-to-toggle tooltips (touch devices can't :hover) ---------- */
+  (function(){
+    var noteEls = document.querySelectorAll('.badge[data-note], .award-note');
+    noteEls.forEach(function(el){
+      el.addEventListener('click', function(e){
+        var wasActive = el.classList.contains('is-active');
+        noteEls.forEach(function(other){ other.classList.remove('is-active'); });
+        if (!wasActive) el.classList.add('is-active');
+        e.stopPropagation();
+      });
+    });
+    document.addEventListener('click', function(){
+      noteEls.forEach(function(el){ el.classList.remove('is-active'); });
+    });
+  })();
 
   /* =========================================================
      HERO — 3D node cluster (Three.js) with 2D canvas fallback
