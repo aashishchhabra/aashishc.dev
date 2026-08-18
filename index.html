@@ -182,7 +182,7 @@
 
   .node-tooltip{
     position:absolute; z-index:5; pointer-events:none;
-    background:rgba(14,26,46,0.95); border:1px solid var(--cyan); border-radius:6px;
+    background:var(--surface); border:1px solid var(--cyan); border-radius:6px;
     padding:8px 14px; font-family:'JetBrains Mono',monospace; font-size:12px;
     color:var(--text); transform:translate(-50%,-130%);
     opacity:0; transition:opacity .2s ease;
@@ -1186,8 +1186,19 @@
     }
     var linkGeo = new THREE.BufferGeometry();
     linkGeo.setAttribute('position', new THREE.Float32BufferAttribute(linkPositions, 3));
-    var linkMat = new THREE.LineBasicMaterial({ color: cyanColor, transparent: true, opacity: 0.15 });
+    function isLightTheme(){ return document.documentElement.getAttribute('data-theme') === 'light'; }
+    // Bright cyan at low opacity reads fine against the near-black dark bg but nearly
+    // vanishes against the light bg, so the link lines need a darker/stronger look in light mode.
+    var linkMat = new THREE.LineBasicMaterial({
+      color: isLightTheme() ? 0x0089AD : cyanColor,
+      transparent: true,
+      opacity: isLightTheme() ? 0.35 : 0.15
+    });
     group.add(new THREE.LineSegments(linkGeo, linkMat));
+    themeToggle.addEventListener('click', function(){
+      linkMat.color.setHex(isLightTheme() ? 0x0089AD : cyanColor);
+      linkMat.opacity = isLightTheme() ? 0.35 : 0.15;
+    });
 
     var raycaster = new THREE.Raycaster();
     raycaster.params.Points && (raycaster.params.Points.threshold = 0.3);
@@ -1316,23 +1327,29 @@
           if (n.y<0||n.y>h) n.vy*=-1;
         });
       }
+      // Bright cyan at low opacity reads fine on the dark bg but nearly vanishes on the
+      // light bg, so use a darker line color and higher opacity when in light theme.
+      var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      var lineRGB = isLight ? '0,137,173' : '0,200,240';
+      var lineBase = isLight ? 0.28 : 0.1;
       for (var a=0;a<nodes.length;a++){
         for (var b=a+1;b<nodes.length;b++){
           var d = Math.hypot(nodes[a].x-nodes[b].x, nodes[a].y-nodes[b].y);
           if (d<130){
-            ctx.strokeStyle = 'rgba(0,200,240,'+(0.1*(1-d/130))+')';
+            ctx.strokeStyle = 'rgba('+lineRGB+','+(lineBase*(1-d/130))+')';
             ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke();
           }
         }
       }
       nodes.forEach(function(n){
-        ctx.beginPath(); ctx.fillStyle='rgba(0,200,240,0.7)';
+        ctx.beginPath(); ctx.fillStyle = isLight ? 'rgba(0,137,173,0.85)' : 'rgba(0,200,240,0.7)';
         ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
       });
       if (!reduceMotion) requestAnimationFrame(draw);
     }
     resize(); initNodes(); draw();
     window.addEventListener('resize', function(){ resize(); initNodes(); if(reduceMotion) draw(); });
+    themeToggle.addEventListener('click', function(){ if (reduceMotion) draw(); });
   }
 
   /* =========================================================
