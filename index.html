@@ -268,6 +268,20 @@
   .about__bio p{ margin-bottom:20px; color:var(--text); }
   .about__bio p:last-child{ margin-bottom:0; color:var(--muted); }
   .about__radar{ display:flex; justify-content:center; }
+
+  /* ---------- HOW I OPERATE (HATS) ---------- */
+  .hats-grid{ display:grid; grid-template-columns:1fr; gap:22px; }
+  @media (min-width:900px){ .hats-grid{ grid-template-columns:repeat(3,1fr); } }
+  .hat-card{ background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:26px; }
+  .hat-card__title{
+    font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--cyan); margin-bottom:16px;
+  }
+  .hat-card ul{ list-style:none; padding:0; margin:0; }
+  .hat-card li{ position:relative; padding-left:18px; margin-bottom:12px; font-size:14px; line-height:1.55; color:var(--text); }
+  .hat-card li:last-child{ margin-bottom:0; }
+  .hat-card li::before{ content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--cyan); }
+  .hats-note{ text-align:center; color:var(--muted); font-size:13.5px; margin-top:32px; font-style:italic; }
   #radar-svg{ width:100%; max-width:420px; height:auto; }
   .radar-poly{ transform-origin:170px 170px; transform:scale(0); transition:transform .8s ease; fill:var(--cyan); fill-opacity:0.18; stroke:var(--cyan); }
   .visible .radar-poly{ transform:scale(1); }
@@ -505,6 +519,7 @@
   <a href="#" class="nav__logo mono">aashishc.dev</a>
   <div class="nav__links">
     <a href="#about">About</a>
+    <a href="#hats">How I Work</a>
     <a href="#command">Command</a>
     <a href="#timeline">Timeline</a>
     <a href="#stack">Stack</a>
@@ -528,6 +543,7 @@
 </div>
 <div class="nav__mobile" id="navMobile">
   <a href="#about">About</a>
+  <a href="#hats">How I Work</a>
   <a href="#command">Command</a>
   <a href="#timeline">Timeline</a>
   <a href="#stack">Stack</a>
@@ -564,13 +580,54 @@
         <h2 class="section-head" style="margin-bottom:28px;">Infrastructure at scale, made reliable.</h2>
         <p>I architect and operate data infrastructure at scale.</p>
         <p>From bare-metal Cloudera clusters spanning 400+ nodes to cloud-native OpenShift platforms, I've spent 12+ years turning complex infrastructure challenges into reliable, observable systems.</p>
-        <p>Currently at Airtel (Xtelify), leading DevOps teams that standardise CI/CD, automation, and observability across one of India's largest data platforms.</p>
+        <p>Currently at Airtel (Xtelify), I lead a team of 3 Java developers and 5 DevOps engineers, drive the move of an internal data mesh platform to Airtel B2B Cloud alongside product and engineering managers, and own container security across every containerised deployment and its CI/CD pipeline.</p>
         <p>Based in Gurugram · Open to senior engineering and engineering leadership roles globally.</p>
       </div>
       <div class="about__radar reveal">
         <div id="radar-svg"></div>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="hats">
+  <div class="container">
+    <span class="section-kicker reveal">Beyond The Title</span>
+    <h2 class="section-head reveal" style="margin-bottom:16px;">Architect, leader, and still an IC.</h2>
+    <p class="section-note reveal">Three roles I run in parallel, not in sequence.</p>
+
+    <div class="hats-grid">
+      <div class="hat-card reveal">
+        <div class="hat-card__title">Architect</div>
+        <ul>
+          <li>Drives the data mesh platform's move to Airtel B2B Cloud — working with product managers and engineering managers across teams, owning the majority of the solutioning without being the sole owner</li>
+          <li>Cross-layer design work with Nxtra (Airtel Data Centre) infra, network, and storage architects on new B2B Cloud services</li>
+          <li>Owns container security architecture across every containerised deployment and its CI/CD pipeline</li>
+          <li>Closes FRDs with product managers and writes the HLD/LLD docs for the services I personally design</li>
+        </ul>
+      </div>
+      <div class="hat-card reveal">
+        <div class="hat-card__title">Leader</div>
+        <ul>
+          <li>Leads a team of 3 Java developers and 5 DevOps engineers</li>
+          <li>Drives the CI/CD strategy directly with the DevOps reportees</li>
+          <li>Runs a dedicated pod — 3 developers, 1 DevOps engineer — building new Airtel B2B Cloud services</li>
+          <li>Mentors DevOps engineers on peer teams too — production issues, scaling problems, career growth</li>
+          <li>Selected by leadership for the Management Development Programme at IIM Indore to sharpen people-management capability</li>
+        </ul>
+      </div>
+      <div class="hat-card reveal">
+        <div class="hat-card__title">Individual Contributor</div>
+        <ul>
+          <li>Works directly with the Java devs — pairing with Copilot, Cursor, and Claude to fix issues, close gaps between code and FRDs, and review PRs</li>
+          <li>Hands-on in enhancing the CI/CD framework itself, not just prescribing it</li>
+          <li>Still does the actual solutioning and design work, not just reviewing it from above</li>
+          <li>Envisions what the on-prem apps and data mesh platform need to become B2B-Cloud-ready</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="hats-note reveal">Even this site is one of those projects — a weekend build with Claude, used as a hands-on way to learn what good agentic-AI practice actually looks like. Poke around the <a href="#command" class="case-study-link">Command Center</a> for more.</p>
   </div>
 </section>
 
@@ -622,12 +679,13 @@
 
     <div class="scrubber reveal">
       <div class="scrubber__track">
-        <input type="range" min="0" max="3" step="1" value="3" class="scrubber__range" id="scrubRange" aria-label="Career timeline scrubber">
+        <input type="range" min="0" max="4" step="1" value="4" class="scrubber__range" id="scrubRange" aria-label="Career timeline scrubber">
         <div class="scrubber__ticks">
           <span class="scrubber__tick" data-idx="0">2014</span>
           <span class="scrubber__tick" data-idx="1">2018</span>
           <span class="scrubber__tick" data-idx="2">2019</span>
-          <span class="scrubber__tick" data-idx="3">Now</span>
+          <span class="scrubber__tick" data-idx="3">2023</span>
+          <span class="scrubber__tick" data-idx="4">Now</span>
         </div>
       </div>
 
@@ -852,7 +910,7 @@
         <div class="cert-card__inner">
           <div class="cert-card__icon" role="img" aria-label="Graduation cap">🎓</div>
           <div class="cert-card__issuer mono">IIM Indore</div>
-          <div class="cert-card__name">Management Development Programme</div>
+          <div class="cert-card__name"><span class="award-note" data-note="Came about 9 months into leading my first team — a leadership-development investment, not where the transition started.">Management Development Programme</span></div>
           <span class="cert-card__year">2024</span>
         </div>
       </div>
@@ -1007,6 +1065,7 @@
 
   var cmdkCommands = [
     { label: 'Go to About', hint: 'section', run: function(){ scrollToId('about'); } },
+    { label: 'Go to How I Work', hint: 'section', run: function(){ scrollToId('hats'); } },
     { label: 'Go to Command Center', hint: 'section', run: function(){ scrollToId('command'); } },
     { label: 'Go to Timeline', hint: 'section', run: function(){ scrollToId('timeline'); } },
     { label: 'Go to Tech Stack', hint: 'section', run: function(){ scrollToId('stack'); } },
@@ -1425,7 +1484,7 @@
       return ['guest — a recruiter, an engineer, or just curious. Fair enough.', 'I\'m Aashish Chhabra — Senior Lead DevOps & Big Data Platform Engineer.', '12+ years. Gurugram, India. Currently at Airtel (Xtelify).'];
     },
     ls: function(){
-      return ['about.txt   experience/   stack.json   projects/   credentials.txt   contact.sh'];
+      return ['about.txt   experience/   stack.json   projects/   credentials.txt   contact.sh   meta.txt'];
     },
     cat: function(arg){
       if (arg === 'about.txt'){
@@ -1434,6 +1493,14 @@
           'From bare-metal Cloudera clusters spanning 400+ nodes to cloud-native',
           'OpenShift platforms, I\'ve spent 12+ years turning complex infrastructure',
           'challenges into reliable, observable systems.'
+        ];
+      }
+      if (arg === 'meta.txt'){
+        return [
+          'This site isn\'t just a portfolio — it\'s a weekend project.',
+          'Built hands-on with Claude to learn agentic AI best practices:',
+          'what to delegate, what to verify, and how to keep an AI',
+          'collaborator honest on a real, shipped codebase.'
         ];
       }
       if (!arg) return ['usage: cat <file>  (try: cat about.txt)'];
@@ -1747,7 +1814,8 @@
     { year:'2014', company:'Tech Mahindra Ltd., Pune', role:'Software Engineer', period:'Jun 2014 – Dec 2017', note:'First contact with Big Data — HDFS migration POCs, SQOOP pipelines, Hive & PIG Latin scripts, plus MySQL/SQL Server engineering.', tag:'3.5 yrs foundation', metric:null },
     { year:'2018', company:'NCR Corporation, Gurugram', role:'Senior Software Engineer', period:'Jan 2018 – Sep 2019', note:'Owned Hortonworks (HDP) clusters end-to-end — YARN, Ranger, Hive, Knox, Kerberos/AD integration, 24/7 on-call, plus GCP-hosted Hadoop via DataProc.', tag:'1 yr 9 mo', metric:null },
     { year:'2019', company:'Xtelify (Airtel)', role:'Senior Lead Engineer joins Data Techops', period:'Sep 2019 — onward', note:'Inherited a 20-node Cloudera cluster and a small DevOps footprint.', tag:'20 nodes → today', metric:20 },
-    { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers. CDH→CDP migration, Kafka platform, OpenShift fleet migration, full-stack observability, pluggable multi-language CI/CD with security gates developers can\'t bypass.', tag:'400+ nodes', metric:400 }
+    { year:'2023', company:'Xtelify (Airtel)', role:'Begins people leadership', period:'2023 — onward', note:'Starts leading a team of DevOps engineers — first management responsibility. Selected the following year for the Management Development Programme at IIM Indore.', tag:'first team lead', metric:null },
+    { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers — plus leading a team of 8 across CI/CD and new B2B Cloud services, and architecting the data mesh platform\'s path to B2B Cloud.', tag:'400+ nodes', metric:400 }
   ];
 
   var scrubRange = document.getElementById('scrubRange');
