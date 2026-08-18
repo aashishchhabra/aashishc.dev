@@ -446,6 +446,15 @@
   .awards-col__head{ color:var(--amber); font-weight:500; font-size:16px; margin-bottom:16px; }
   .awards-col li{ position:relative; padding-left:20px; margin-bottom:10px; font-size:14.5px; color:var(--text); }
   .awards-col li::before{ content:''; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--amber); }
+  .award-note{ position:relative; cursor:help; border-bottom:1px dotted var(--muted); }
+  .award-note:hover{ border-bottom-color:var(--cyan); color:var(--cyan); }
+  .award-note:hover::after{
+    content:attr(data-note);
+    position:absolute; left:0; top:100%; margin-top:6px; width:220px; white-space:normal;
+    background:#050B15; border:1px solid var(--cyan); color:var(--text);
+    padding:8px 10px; border-radius:4px; font-size:11.5px; line-height:1.5; z-index:6;
+    box-shadow:0 0 12px rgba(0,200,240,0.3);
+  }
 
   /* ---------- CONTACT / FOOTER ---------- */
   .contact{ text-align:center; }
@@ -695,6 +704,7 @@
           <span class="badge">Docker Swarm</span>
           <span class="badge">Docker</span>
           <span class="badge" data-note="AZ-900 certified">Microsoft Azure</span>
+          <span class="badge" data-note="DataProc + Hadoop-on-GCP VMs (NCR, 2018–19)">Google Cloud Platform</span>
           <span class="badge" data-note="PaaS strategy on Airtel's own cloud">Airtel Cloud</span>
         </div>
       </div>
@@ -876,11 +886,11 @@
       <div class="awards-col reveal">
         <div class="awards-col__head">Tech Mahindra</div>
         <ul>
-          <li>ACE Award (consistent excellence)</li>
-          <li>Bravo Award (two quarters)</li>
-          <li>Highest Learner Award</li>
-          <li>Pat on the Back Award</li>
-          <li>Best Team Award (two alternate quarters)</li>
+          <li><span class="award-note" data-note="Consistently excelling and outstanding performance over a 2-year span.">ACE Award (consistent excellence)</span></li>
+          <li><span class="award-note" data-note="Given quarterly among a team of 25 — received it twice.">Bravo Award (two quarters)</span></li>
+          <li><span class="award-note" data-note="Outstanding performance learning new technologies, fastest rate on the team.">Highest Learner Award</span></li>
+          <li><span class="award-note" data-note="For displaying &quot;Pursuit of Excellence&quot; and excelling consistently.">Pat on the Back Award</span></li>
+          <li><span class="award-note" data-note="Across many teams in the Business Unit, for two alternate quarters.">Best Team Award (two alternate quarters)</span></li>
         </ul>
       </div>
     </div>
@@ -1455,6 +1465,7 @@
           'NCR Corporation — Senior Software Engineer',
           '  • Deployed/managed multiple HDP clusters (YARN, Ranger, Hive, Knox, Oozie)',
           '  • Implemented Kerberos for Active Directory authentication',
+          '  • Deployed DataProc clusters and Hadoop-on-GCP VMs for cross-cloud workloads',
           '  • Built SQOOP pipelines from MySQL/Oracle into Hadoop',
           '  • Provided 24/7 on-call support for production clusters'
         ];
@@ -1473,7 +1484,7 @@
       var groups = {
         bigdata: 'Cloudera CDH/CDP, HDP, Apache Kafka, Hive, SQOOP, Spark Operator, Trino, YARN, Zookeeper, Airflow',
         devops: 'Ansible, Jenkins CI/CD, Pluggable CI/CD Framework, BlackDuck, Coverity, Prisma Cloud, GitOps',
-        cloud: 'OpenShift (OCP), Kubernetes, Docker Swarm, Docker, Microsoft Azure, Airtel Cloud',
+        cloud: 'OpenShift (OCP), Kubernetes, Docker Swarm, Docker, Microsoft Azure, Google Cloud Platform, Airtel Cloud',
         observability: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, Grafana, Kafka UI, OpenTelemetry',
         languages: 'Python, Pandas, Shell Scripting, MySQL, Oracle SQL, JupyterHub, Cluster Shell'
       };
@@ -1734,7 +1745,7 @@
      ========================================================= */
   var milestones = [
     { year:'2014', company:'Tech Mahindra Ltd., Pune', role:'Software Engineer', period:'Jun 2014 – Dec 2017', note:'First contact with Big Data — HDFS migration POCs, SQOOP pipelines, Hive & PIG Latin scripts, plus MySQL/SQL Server engineering.', tag:'3.5 yrs foundation', metric:null },
-    { year:'2018', company:'NCR Corporation, Gurugram', role:'Senior Software Engineer', period:'Jan 2018 – Sep 2019', note:'Owned Hortonworks (HDP) clusters end-to-end — YARN, Ranger, Hive, Knox, Kerberos/AD integration, 24/7 on-call.', tag:'1 yr 9 mo', metric:null },
+    { year:'2018', company:'NCR Corporation, Gurugram', role:'Senior Software Engineer', period:'Jan 2018 – Sep 2019', note:'Owned Hortonworks (HDP) clusters end-to-end — YARN, Ranger, Hive, Knox, Kerberos/AD integration, 24/7 on-call, plus GCP-hosted Hadoop via DataProc.', tag:'1 yr 9 mo', metric:null },
     { year:'2019', company:'Xtelify (Airtel)', role:'Senior Lead Engineer joins Data Techops', period:'Sep 2019 — onward', note:'Inherited a 20-node Cloudera cluster and a small DevOps footprint.', tag:'20 nodes → today', metric:20 },
     { year:'2026', company:'Xtelify (Airtel)', role:'Senior Lead Engineer — Data Techops (present)', period:'7+ years in', note:'400+ Datanodes · 19 PB · 1,200+ servers. CDH→CDP migration, Kafka platform, OpenShift fleet migration, full-stack observability, pluggable multi-language CI/CD with security gates developers can\'t bypass.', tag:'400+ nodes', metric:400 }
   ];
