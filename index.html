@@ -390,7 +390,10 @@
   .filter-pill:hover{ color:var(--text); border-color:var(--cyan); }
   .filter-pill.is-active{ background:var(--cyan); color:#052330; border-color:var(--cyan); }
 
-  .stack-group{ margin-bottom:36px; overflow:hidden; transition:opacity .3s ease, max-height .3s ease; }
+  /* overflow is toggled per-state in JS (visible while shown, hidden while collapsing) —
+     a permanent overflow:hidden here would clip any tooltip opening downward from a
+     badge in a category's last row. */
+  .stack-group{ margin-bottom:36px; transition:opacity .3s ease, max-height .3s ease; }
   .stack-group__head{
     font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1.5px;
     text-transform:uppercase; margin-bottom:16px;
@@ -402,17 +405,26 @@
     position:relative; cursor:default;
   }
   .badge:hover{ border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 8px rgba(0,200,240,0.3); }
+  /* Always opens downward, positioned with top+margin and margin-left centering
+     (never bottom, never a negative top, never transform for the offset) — every
+     other combination we tried silently drops the first line of wrapped attr()
+     content in this rendering engine. A tooltip that runs past the viewport
+     bottom just needs a scroll; that's a far better failure mode than one that
+     hides content. */
   .badge[data-note]:hover::after, .badge[data-note].is-active::after{
     content:attr(data-note);
-    position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%);
+    position:absolute; left:50%; margin-left:-90px; top:100%; margin-top:8px;
     background:var(--surface); border:1px solid var(--cyan); color:var(--text);
     padding:6px 10px; border-radius:4px; font-size:11px; white-space:normal; z-index:150;
-    width:max-content; max-width:min(200px, calc(100vw - 32px));
+    width:180px; max-width:calc(100vw - 32px);
     box-shadow:0 0 12px rgba(0,200,240,0.3);
   }
-  /* flipped when there's no room above (badge sits close to the fixed nav) */
-  .badge[data-note].tip-below:hover::after, .badge[data-note].tip-below.is-active::after{
-    bottom:auto; top:calc(100% + 8px);
+  /* re-anchored when centering would push the tooltip off the left/right edge */
+  .badge[data-note].edge-l:hover::after, .badge[data-note].edge-l.is-active::after{
+    left:0; margin-left:0;
+  }
+  .badge[data-note].edge-r:hover::after, .badge[data-note].edge-r.is-active::after{
+    left:auto; right:0; margin-left:0;
   }
 
   /* ---------- PROJECTS ---------- */
@@ -474,9 +486,9 @@
     padding:8px 10px; border-radius:4px; font-size:11.5px; line-height:1.5; z-index:150;
     box-shadow:0 0 12px rgba(0,200,240,0.3);
   }
-  /* flipped when there's no room below (note sits close to the bottom of the viewport) */
-  .award-note.tip-above:hover::after, .award-note.tip-above.is-active::after{
-    top:auto; bottom:calc(100% + 6px); margin-top:0; margin-bottom:6px;
+  /* re-anchored to the right when the default left-aligned box would run off the right edge */
+  .award-note.edge-r:hover::after, .award-note.edge-r.is-active::after{
+    left:auto; right:0;
   }
 
   /* ---------- CONTACT / FOOTER ---------- */
@@ -1175,17 +1187,23 @@
 
   /* ---------- Tooltip flip direction + tap-to-toggle (touch devices can't :hover) ---------- */
   (function(){
-    var NAV_H = 70;           // fixed nav height + margin
-    var TIP_EST_H = 90;       // generous estimate for a wrapped 2-3 line tooltip
+    var BADGE_TIP_W = 180;    // fixed width set in CSS for .badge tooltips
+    var AWARD_TIP_W = 220;    // fixed width set in CSS for .award-note tooltips
+    var EDGE_MARGIN = 12;
 
+    // Tooltips always open downward (top:100% + margin) — every "opens above" scheme
+    // we tried (bottom+margin, bottom+calc, even a plain negative top px) silently
+    // dropped the first line of wrapped attr() content in this rendering engine, so
+    // we don't flip direction at all. Only horizontal re-anchoring is needed.
     function positionTip(el){
       var rect = el.getBoundingClientRect();
+      var vw = window.innerWidth;
       if (el.classList.contains('badge')){
-        // opens above by default — flip below if there's no room above the nav
-        el.classList.toggle('tip-below', rect.top - NAV_H < TIP_EST_H);
+        var center = rect.left + rect.width / 2;
+        el.classList.toggle('edge-l', center - BADGE_TIP_W / 2 < EDGE_MARGIN);
+        el.classList.toggle('edge-r', center + BADGE_TIP_W / 2 > vw - EDGE_MARGIN);
       } else {
-        // award-note opens below by default — flip above if it'd run past the bottom
-        el.classList.toggle('tip-above', rect.bottom + TIP_EST_H > window.innerHeight);
+        el.classList.toggle('edge-r', rect.left + AWARD_TIP_W > vw - EDGE_MARGIN);
       }
     }
 
@@ -1906,8 +1924,12 @@
         var match = filter === 'all' || group.getAttribute('data-category') === filter;
         if (match){
           group.style.display = '';
-          requestAnimationFrame(function(){ group.style.opacity = '1'; group.style.maxHeight = '400px'; });
+          requestAnimationFrame(function(){
+            group.style.opacity = '1'; group.style.maxHeight = '400px';
+            setTimeout(function(){ if (group.style.opacity === '1') group.style.overflow = 'visible'; }, 300);
+          });
         } else {
+          group.style.overflow = 'hidden';
           group.style.opacity = '0';
           group.style.maxHeight = '0';
           setTimeout(function(){ if (group.style.opacity === '0') group.style.display = 'none'; }, 300);
