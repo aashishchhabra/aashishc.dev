@@ -18,26 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-tokens.css">
 <style>
-  :root{
-    --bg:#070D1A; --surface:#0E1A2E; --border:#1A2F4A; --cyan:#00C8F0; --amber:#FF8C42;
-    --text:#E8F4F8; --muted:#6B8FA8; --nav-bg:rgba(7,13,26,0.55);
-  }
-  :root[data-theme="light"]{
-    --bg:#F4F7FB; --surface:#FFFFFF; --border:#D8E3EF; --cyan:#0089AD; --amber:#C15F00;
-    --text:#101826; --muted:#54677D; --nav-bg:rgba(244,247,251,0.75);
-  }
-  *,*::before,*::after{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-  body{
-    margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
-    font-weight:400; line-height:1.7; overflow-x:hidden; transition:background-color .3s ease, color .3s ease;
-  }
-  h1,h2,h3{ margin:0; font-family:'Space Grotesk',sans-serif; }
-  p{ margin:0; }
-  a{ color:inherit; text-decoration:none; }
-  .mono{ font-family:'JetBrains Mono',monospace; }
-  :focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
   .container{ max-width:900px; margin:0 auto; padding:0 24px; }
 
   .nav{
