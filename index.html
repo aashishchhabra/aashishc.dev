@@ -389,6 +389,7 @@
     font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1.5px;
     text-transform:uppercase; margin-bottom:16px;
   }
+  .stack-group__sub{ font-size:13.5px; color:var(--muted); margin:-8px 0 14px; }
   .stack-group__badges{ display:flex; flex-wrap:wrap; gap:10px; }
   .badge{
     background:var(--surface); border:1px solid var(--border); font-family:'JetBrains Mono',monospace;
@@ -730,99 +731,109 @@
 
     <div class="filter-bar reveal">
       <button class="filter-pill is-active" data-filter="all">All</button>
-      <button class="filter-pill" data-filter="bigdata">Big Data</button>
-      <button class="filter-pill" data-filter="devops">DevOps</button>
-      <button class="filter-pill" data-filter="cloud">Cloud</button>
-      <button class="filter-pill" data-filter="observability">Observability</button>
-      <button class="filter-pill" data-filter="languages">Languages</button>
-      <button class="filter-pill" data-filter="system">System</button>
+      <button class="filter-pill" data-filter="ran">Ran day to day</button>
+      <button class="filter-pill" data-filter="built">Built myself</button>
+      <button class="filter-pill" data-filter="own">Design &amp; own</button>
+      <button class="filter-pill" data-filter="setup">Set up for teams</button>
+      <button class="filter-pill" data-filter="used">Used</button>
+      <button class="filter-pill" data-filter="familiar">Familiar with</button>
     </div>
 
     <div id="stackGroups">
-      <div class="stack-group reveal" data-category="bigdata">
-        <div class="stack-group__head">Big Data</div>
+      <div class="stack-group reveal" data-category="ran">
+        <div class="stack-group__head">Ran day to day</div>
+        <p class="stack-group__sub">Platforms I administered in production and answered for.</p>
         <div class="stack-group__badges">
-          <span class="badge" data-note="Administered at scale: ~15 → ~390 servers">Cloudera CDH/CDP</span>
-          <span class="badge" data-note="Multiple HDP clusters at NCR">HDP</span>
+          <span class="badge" data-note="Sole administrator as it grew from ~15 to ~390 servers">Cloudera CDH/CDP</span>
+          <span class="badge" data-note="Built and ran the Enterprise Data Lake at NCR">Hortonworks HDP</span>
           <span class="badge" data-note="9 brokers, ~40 Gbps combined traffic, kernel-tuned bare metal">Apache Kafka</span>
-          <span class="badge" data-note="DDL/DML pipelines across Hadoop layers">Apache Hive</span>
-          <span class="badge" data-note="MySQL/Oracle → Hadoop ingestion">SQOOP</span>
-          <span class="badge" data-note="Deployed on OpenShift for Kubernetes-native Spark">Spark Operator</span>
-          <span class="badge" data-note="Deployed on Kubernetes with Kerberos auth">Trino</span>
           <span class="badge" data-note="Cluster resource management">YARN</span>
           <span class="badge" data-note="Coordination for Kafka & Hadoop">Zookeeper</span>
-          <span class="badge" data-note="DAG-based orchestration & automation">Apache Airflow</span>
-        </div>
-      </div>
-
-      <div class="stack-group reveal" data-category="devops">
-        <div class="stack-group__head">DevOps</div>
-        <div class="stack-group__badges">
-          <span class="badge" data-note="Automated deployment & housekeeping">Ansible</span>
-          <span class="badge" data-note="Pipelines across every platform">Jenkins CI/CD</span>
-          <span class="badge" data-note="Marker-file driven: any repo is auto-wired into shared pipelines">Pluggable CI/CD Framework</span>
-          <span class="badge" data-note="DevSecOps CI integration">BlackDuck</span>
-          <span class="badge" data-note="Static analysis in CI">Coverity</span>
-          <span class="badge" data-note="Replaced Prisma Cloud, Oct 2026, across 170+ repos">Wiz</span>
-          <span class="badge" data-note="Long-running workflow orchestration for Kafka-as-a-Service">Temporal</span>
-          <span class="badge" data-note="Deployment for Kafka-as-a-Service">Argo CD</span>
-          <span class="badge">GitOps</span>
-        </div>
-      </div>
-
-      <div class="stack-group reveal" data-category="cloud">
-        <div class="stack-group__head">Cloud</div>
-        <div class="stack-group__badges">
-          <span class="badge" data-note="Docker Swarm → OCP migration">OpenShift (OCP)</span>
-          <span class="badge">Kubernetes</span>
-          <span class="badge">Docker Swarm</span>
-          <span class="badge">Docker</span>
-          <span class="badge" data-note="AZ-900 certified">Microsoft Azure</span>
-          <span class="badge" data-note="Packaging for Kafka-as-a-Service">Helm</span>
-          <span class="badge" data-note="Contributing to platform/service packaging for B2B customers">Airtel B2B Cloud</span>
-        </div>
-      </div>
-
-      <div class="stack-group reveal" data-category="observability">
-        <div class="stack-group__head">Observability</div>
-        <div class="stack-group__badges">
-          <span class="badge" data-note="Centralised logging across platforms">Elastic Stack (ELK)</span>
-          <span class="badge">Elasticsearch APM</span>
-          <span class="badge">Fleet</span>
-          <span class="badge">Synthetics</span>
-          <span class="badge" data-note="Custom Kafka dashboards">Grafana</span>
-          <span class="badge">Kafka UI</span>
-          <span class="badge">OpenTelemetry</span>
-          <span class="badge" data-note="Kafka-as-a-Service metrics">Prometheus</span>
-        </div>
-      </div>
-
-      <div class="stack-group reveal" data-category="languages">
-        <div class="stack-group__head">Languages</div>
-        <div class="stack-group__badges">
-          <span class="badge" data-note="Automation & cluster reporting">Python</span>
-          <span class="badge">Pandas</span>
-          <span class="badge">Shell Scripting</span>
-          <span class="badge">MySQL</span>
-          <span class="badge">Oracle SQL</span>
-          <span class="badge" data-note="Early career, now back via Kafka-as-a-Service">Java</span>
-          <span class="badge" data-note="Kafka-as-a-Service web front end">React</span>
-          <span class="badge" data-note="Kafka-as-a-Service provisioner">Spring Boot</span>
-          <span class="badge" data-note="Kafka-as-a-Service data layer">PostgreSQL</span>
-          <span class="badge" data-note="Kafka-as-a-Service caching & rate limits">Redis</span>
-          <span class="badge" data-note="Deployed as a managed service with LDAP">JupyterHub</span>
-          <span class="badge" data-note="Bulk ops across production clusters">Cluster Shell</span>
-        </div>
-      </div>
-
-      <div class="stack-group reveal" data-category="system">
-        <div class="stack-group__head">System</div>
-        <div class="stack-group__badges">
+          <span class="badge" data-note="Sign-in and fine-grained access control for Hadoop clusters">Kerberos &amp; Ranger</span>
+          <span class="badge" data-note="Pipelines across every platform">Jenkins</span>
+          <span class="badge" data-note="Kafka health dashboards">Grafana</span>
+          <span class="badge" data-note="Topics and permissions for the Kafka platform">Kafka UI</span>
           <span class="badge">RHEL/CentOS 7–8</span>
-          <span class="badge">Kernel Tuning</span>
+          <span class="badge" data-note="Network buffers, interrupt handling and file-handle limits for Kafka brokers">Kernel Tuning</span>
           <span class="badge">Systemd</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal" data-category="built">
+        <div class="stack-group__head">Built myself</div>
+        <p class="stack-group__sub">Things I wrote personally, not just operated.</p>
+        <div class="stack-group__badges">
+          <span class="badge" data-note="Marker-file driven: any repo is auto-wired into shared pipelines — 170+ repositories">Central CI/CD Framework</span>
+          <span class="badge" data-note="Automation and cluster reporting">Python automation</span>
+          <span class="badge" data-note="Automated deployment & housekeeping">Ansible automation</span>
+          <span class="badge" data-note="Python + Ansible scripts that create Kafka clusters">Kafka cluster provisioning</span>
+          <span class="badge" data-note="User onboarding, housekeeping and Hive table repair">Shell Scripting</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal" data-category="own">
+        <div class="stack-group__head">Design &amp; own</div>
+        <p class="stack-group__sub">The Kafka-as-a-Service stack — I own the architecture and technology choices; the team builds it with me.</p>
+        <div class="stack-group__badges">
+          <span class="badge" data-note="Web front end">React</span>
+          <span class="badge" data-note="Contract-first API validation service">Smithy</span>
+          <span class="badge" data-note="Provisioner service">Java Spring Boot</span>
+          <span class="badge" data-note="Long-running provisioning workflows">Temporal</span>
+          <span class="badge" data-note="Tenant and provisioning data">PostgreSQL</span>
+          <span class="badge" data-note="Caching & rate limits">Redis</span>
+          <span class="badge" data-note="Service and cluster metrics">Prometheus</span>
+          <span class="badge" data-note="Packaging">Helm</span>
+          <span class="badge" data-note="Deployment">Argo CD</span>
+          <span class="badge" data-note="Contributing to packaging platforms and services for B2B customers">Airtel B2B Cloud</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal" data-category="setup">
+        <div class="stack-group__head">Set up for teams</div>
+        <p class="stack-group__sub">Standards and tools I established, drove adoption of, then handed on.</p>
+        <div class="stack-group__badges">
+          <span class="badge" data-note="Set Airtel's central logging and monitoring standards">Elastic Stack (ELK)</span>
+          <span class="badge" data-note="Application tracing">Elasticsearch APM</span>
+          <span class="badge" data-note="Centrally managed agents on VMs, bare metal and Kubernetes">Fleet</span>
+          <span class="badge" data-note="Health-check monitoring">Synthetics</span>
+          <span class="badge" data-note="Led and contributed to the move from Docker Swarm and server installs">OpenShift (OCP)</span>
+          <span class="badge" data-note="Runs Spark jobs on Kubernetes">Spark Operator</span>
+          <span class="badge" data-note="On Kubernetes with Kerberos sign-in">Trino</span>
+          <span class="badge" data-note="Notebooks for developers, with LDAP sign-in">JupyterHub</span>
+          <span class="badge" data-note="Software-composition scanning in the pipelines">Black Duck</span>
+          <span class="badge" data-note="Static analysis in the pipelines">Coverity</span>
+          <span class="badge" data-note="Replaced Prisma Cloud, Oct 2026, across 170+ repos">Wiz</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal" data-category="used">
+        <div class="stack-group__head">Used</div>
+        <p class="stack-group__sub">Working tools across twelve years.</p>
+        <div class="stack-group__badges">
+          <span class="badge" data-note="Early career application work; now reviewing the Kafka-as-a-Service provisioner">Java</span>
+          <span class="badge" data-note="Cluster job reporting">Pandas</span>
+          <span class="badge" data-note="Stored procedures, reports and change scripts">SQL</span>
+          <span class="badge">MySQL</span>
+          <span class="badge">SQL Server</span>
+          <span class="badge" data-note="Transformations across Hadoop layers">Apache Hive</span>
+          <span class="badge" data-note="Relational databases → Hadoop ingestion">SQOOP</span>
+          <span class="badge" data-note="Scheduled chains of data jobs">Oozie</span>
+          <span class="badge" data-note="Schedules for housekeeping and data jobs">Apache Airflow</span>
+          <span class="badge">Kubernetes</span>
+          <span class="badge">Docker</span>
+          <span class="badge">Docker Swarm</span>
+          <span class="badge" data-note="Bulk ops across production clusters">Cluster Shell</span>
           <span class="badge">RPM/TAR Packaging</span>
-          <span class="badge" data-note="Operates across a 1,200+ machine estate (bare metal, VMs, OpenShift, Kubernetes)">Bare Metal</span>
+        </div>
+      </div>
+
+      <div class="stack-group reveal" data-category="familiar">
+        <div class="stack-group__head">Familiar with</div>
+        <p class="stack-group__sub">Certified or exposed to, not run in depth.</p>
+        <div class="stack-group__badges">
+          <span class="badge" data-note="AZ-900 certified">Microsoft Azure</span>
+          <span class="badge">OpenTelemetry</span>
+          <span class="badge" data-note="As a data source for Hadoop ingestion">Oracle</span>
         </div>
       </div>
     </div>
@@ -1699,7 +1710,7 @@
         '  ls                      list sections',
         '  cat <file>              read a section (e.g. cat about.txt)',
         '  experience [company]    xtelify | ncr | techm',
-        '  stack [category]        bigdata | devops | cloud | observability | languages',
+        '  stack [group]           ran | built | own | setup | used | familiar',
         '  projects                key impact projects',
         '  credentials             certifications & awards',
         '  contact                 how to reach me',
@@ -1791,17 +1802,17 @@
     },
     stack: function(arg){
       var groups = {
-        bigdata: 'Cloudera CDH/CDP, HDP, Apache Kafka, Hive, SQOOP, Spark Operator, Trino, YARN, Zookeeper, Airflow',
-        devops: 'Ansible, Jenkins CI/CD, Pluggable CI/CD Framework, BlackDuck, Coverity, Wiz, Temporal, Argo CD, GitOps',
-        cloud: 'OpenShift (OCP), Kubernetes, Docker Swarm, Docker, Microsoft Azure, Helm, Airtel B2B Cloud',
-        observability: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, Grafana, Kafka UI, OpenTelemetry, Prometheus',
-        languages: 'Python, Pandas, Shell Scripting, MySQL, Oracle SQL, Java, React, Spring Boot, PostgreSQL, Redis, JupyterHub, Cluster Shell',
-        system: 'RHEL/CentOS 7-8, Kernel Tuning, Systemd, RPM/TAR Packaging, Bare Metal'
+        ran: 'Cloudera CDH/CDP, Hortonworks HDP, Apache Kafka, YARN, Zookeeper, Kerberos & Ranger, Jenkins, Grafana, Kafka UI, RHEL/CentOS 7-8, Kernel Tuning, Systemd',
+        built: 'Central CI/CD Framework, Python automation, Ansible automation, Kafka cluster provisioning, Shell Scripting',
+        own: 'Kafka-as-a-Service stack: React, Smithy, Java Spring Boot, Temporal, PostgreSQL, Redis, Prometheus, Helm, Argo CD; Airtel B2B Cloud',
+        setup: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, OpenShift (OCP), Spark Operator, Trino, JupyterHub, Black Duck, Coverity, Wiz',
+        used: 'Java, Pandas, SQL, MySQL, SQL Server, Apache Hive, SQOOP, Oozie, Apache Airflow, Kubernetes, Docker, Docker Swarm, Cluster Shell, RPM/TAR Packaging',
+        familiar: 'Microsoft Azure (AZ-900), OpenTelemetry, Oracle'
       };
-      if (!arg) return ['categories: bigdata, devops, cloud, observability, languages, system', 'run `stack <category>` for the list, e.g. `stack bigdata`.'];
-      var key = arg.toLowerCase().replace('kafka','bigdata');
+      if (!arg) return ['grouped by depth: ran, built, own, setup, used, familiar', 'run `stack <group>` for the list, e.g. `stack ran`.'];
+      var key = arg.toLowerCase();
       if (groups[key]) return [groups[key]];
-      return ['stack: unknown category "' + arg + '".'];
+      return ['stack: unknown group "' + arg + '".'];
     },
     projects: function(){
       return [

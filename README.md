@@ -37,7 +37,7 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 - Simulated ops telemetry widget (clearly labeled illustrative, not real production data)
 - Draggable career timeline scrubber with an animated growth metric
 - Expandable project case-study cards, including a full deep-dive page for the Kafka Platform build
-- Filterable tech stack, animated skill radar chart, scroll reveals throughout
+- Tech stack grouped and filterable by depth of involvement (ran, built, own, set up, used), animated skill radar chart, scroll reveals throughout
 - Light/dark theme toggle (persisted, defaults to system preference)
 - Command palette (`⌘K` / `Ctrl+K`) — jump to any section or run an action from the keyboard
 - One-click copy on email/phone with toast confirmation
