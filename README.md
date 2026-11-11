@@ -32,7 +32,7 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 
 ## Features
 
-- 3D interactive node-cluster hero (Three.js + OrbitControls) — drag to rotate, click amber nodes for stats
+- 3D interactive node-cluster hero (Three.js + OrbitControls) — mouse-drag to rotate (desktop), click/tap amber nodes for stats; touch scrolls normally rather than rotating the scene
 - Working terminal ("Command Center") — explore experience, stack, and projects via real shell commands
 - Simulated ops telemetry widget (clearly labeled illustrative, not real production data)
 - Draggable career timeline scrubber with an animated growth metric
