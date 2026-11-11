@@ -461,6 +461,26 @@
   .contact__link{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text); transition:color .2s ease; }
   .contact__link:hover{ color:var(--cyan); }
   .contact__item{ display:flex; align-items:center; gap:6px; }
+
+  /* ---------- CONTACT: per-number channel groups ---------- */
+  .contact__numbers{ display:flex; flex-direction:column; align-items:center; gap:22px; margin-bottom:28px; }
+  .contact__number{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .contact__number-label{
+    font-size:11px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase;
+  }
+  .contact__number-row{
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  @media (min-width:600px){ .contact__number-row{ flex-direction:row; gap:16px; } }
+  .contact__link-static{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text); }
+  .contact__chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+  .contact__chip{
+    display:inline-flex; align-items:center; gap:5px; padding:6px 13px; border-radius:16px;
+    border:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--text); transition:all .2s ease;
+  }
+  .contact__chip:hover{ border-color:var(--cyan); color:var(--cyan); }
+
   .copy-btn{
     background:none; border:1px solid var(--border); border-radius:4px; color:var(--muted);
     font-size:11px; padding:3px 6px; line-height:1; transition:all .2s ease;
@@ -994,13 +1014,17 @@
         <a class="contact__link" href="mailto:chhabra.aashish23@gmail.com"><span role="img" aria-label="Email">📧</span> chhabra.aashish23@gmail.com</a>
         <button class="copy-btn mono" data-copy="chhabra.aashish23@gmail.com" aria-label="Copy email address">copy</button>
       </span>
-      <a class="contact__link" href="https://www.linkedin.com/in/aashishchhabra" target="_blank" rel="noopener"><span role="img" aria-label="Briefcase">💼</span> linkedin.com/in/aashishchhabra</a>
       <span class="contact__item">
-        <a class="contact__link" href="tel:+917875570666"><span role="img" aria-label="Mobile phone">📱</span> +91-7875570666</a>
-        <button class="copy-btn mono" data-copy="+91-7875570666" aria-label="Copy phone number">copy</button>
+        <a class="contact__link" href="https://www.linkedin.com/in/aashishchhabra" target="_blank" rel="noopener"><span role="img" aria-label="Briefcase">💼</span> linkedin.com/in/aashishchhabra</a>
+        <button class="copy-btn mono" data-copy="linkedin.com/in/aashishchhabra" aria-label="Copy LinkedIn URL">copy</button>
       </span>
       <span class="contact__link"><span role="img" aria-label="Location pin">📍</span> Gurugram, Haryana, India</span>
     </div>
+
+    <!-- Populated by renderContactNumbers() from the CONTACT_NUMBERS config near the
+         top of the page script — see that function for the single AU_VOICE_SMS_AVAILABLE
+         toggle controlling the Australian number's call/SMS channels. -->
+    <div class="contact__numbers reveal" id="contactNumbers"></div>
 
     <div class="resume-picker reveal">
       <span class="resume-picker__label">Download résumé (PDF) — by country format</span>
@@ -1036,6 +1060,74 @@
 (function(){
   "use strict";
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* =========================================================
+     CONTACT CHANNELS — single config, one toggle flag
+     Rendered before the copy-btn and tooltip wiring below, so both of
+     those querySelectorAll passes naturally pick up these elements too.
+     ========================================================= */
+  // Flip to true once the Australian SIM is recharged and can receive calls
+  // and SMS directly. WhatsApp chat on the AU number is unaffected by this
+  // flag — it runs over data, not the SIM's voice/SMS balance, so it stays
+  // on whenever the AU number is shown at all.
+  var AU_VOICE_SMS_AVAILABLE = false;
+
+  var CONTACT_NUMBERS = [
+    {
+      countryLabel: '🇮🇳 India',
+      raw: '+917875570666',
+      display: '+91 78755 70666',
+      channels: { call: true, sms: true, whatsappChat: true },
+      whatsappPrefill: 'Hi Aashish, I came across your portfolio and would like to connect.'
+    },
+    {
+      countryLabel: '🇦🇺 Australia',
+      raw: '+61481146605',
+      display: '+61 481 146 605',
+      channels: { call: AU_VOICE_SMS_AVAILABLE, sms: AU_VOICE_SMS_AVAILABLE, whatsappChat: true },
+      whatsappPrefill: 'Hi Aashish, could we do a quick call?'
+    }
+  ];
+
+  function renderContactNumbers(){
+    var container = document.getElementById('contactNumbers');
+    if (!container) return;
+    var html = '';
+    CONTACT_NUMBERS.forEach(function(n){
+      var digits = n.raw.replace('+', '');
+      var countryName = n.countryLabel.replace(/^\S+\s*/, '');
+      var chips = '';
+      if (n.channels.call){
+        chips += '<a class="contact__chip" href="tel:' + n.raw + '">' +
+          '<span role="img" aria-label="Phone call">☎️</span> Call</a>';
+      }
+      if (n.channels.sms){
+        chips += '<a class="contact__chip" href="sms:' + n.raw + '">' +
+          '<span role="img" aria-label="Text message">💬</span> SMS</a>';
+      }
+      if (n.channels.whatsappChat){
+        var waHref = 'https://wa.me/' + digits + '?text=' + encodeURIComponent(n.whatsappPrefill);
+        var isCallPrefill = n.whatsappPrefill.toLowerCase().indexOf('call') !== -1;
+        var note = 'Opens a WhatsApp chat pre-filled with a message' +
+          (isCallPrefill ? ' proposing a call' : '') + ' — not a direct call link.';
+        chips += '<a class="contact__chip" href="' + waHref + '" target="_blank" rel="noopener" data-note="' + note + '">' +
+          '<span role="img" aria-label="WhatsApp">🟢</span> WhatsApp</a>';
+      }
+      html +=
+        '<div class="contact__number">' +
+          '<span class="contact__number-label mono">' + n.countryLabel + '</span>' +
+          '<div class="contact__number-row">' +
+            '<span class="contact__item">' +
+              '<span class="contact__link-static"><span role="img" aria-label="Mobile phone">📱</span> ' + n.display + '</span>' +
+              '<button class="copy-btn mono" data-copy="' + n.display + '" aria-label="Copy ' + countryName + ' phone number">copy</button>' +
+            '</span>' +
+            '<div class="contact__chips">' + chips + '</div>' +
+          '</div>' +
+        '</div>';
+    });
+    container.innerHTML = html;
+  }
+  renderContactNumbers();
 
   /* ---------- Theme toggle ---------- */
   var themeToggle = document.getElementById('themeToggle');
