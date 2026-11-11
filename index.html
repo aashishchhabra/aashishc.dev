@@ -1358,7 +1358,7 @@
       el.addEventListener('click', function(e){
         e.stopPropagation();
         if (lockedEl === el){ lockedEl = null; hideTip(el); }
-        else { lockedEl = el; showTip(el); }
+        else { if (lockedEl) hideTip(lockedEl); lockedEl = el; showTip(el); }
       });
     });
     document.addEventListener('click', function(){ lockedEl = null; hideTip(activeEl); });
@@ -2080,7 +2080,7 @@
     scrubCompany.textContent = m.company;
     scrubTag.textContent = m.tag;
     scrubRole.textContent = m.role;
-    scrubPeriod.textContent = m.period + ' · ' + m.year;
+    scrubPeriod.textContent = m.period;
     scrubNote.textContent = m.note;
 
     ticks.forEach(function(t){ t.classList.toggle('is-active', Number(t.getAttribute('data-idx')) === idx); });
