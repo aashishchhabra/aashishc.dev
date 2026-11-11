@@ -151,6 +151,22 @@
   .node-tooltip.is-visible{ opacity:1; }
   .node-tooltip strong{ color:var(--amber); display:block; font-size:14px; }
 
+  /* Single reusable tooltip for every [data-note] element (tech-stack badges, award
+     notes) — appended once near <body>, positioned in JS via getBoundingClientRect
+     at show time. Being position:fixed on its own element (not a pseudo-element
+     anchored inside the badge/award markup) means no ancestor's overflow:hidden can
+     ever clip it, and direction (above/below) and horizontal clamping are computed
+     from actual available viewport space instead of being hardcoded. */
+  .data-tooltip{
+    position:fixed; z-index:300; max-width:240px; white-space:normal;
+    background:var(--surface); border:1px solid var(--cyan); color:var(--text);
+    padding:8px 12px; border-radius:4px; font-size:11.5px; line-height:1.5;
+    box-shadow:0 0 12px rgba(0,200,240,0.3);
+    opacity:0; pointer-events:none; transform:translateY(4px);
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .data-tooltip.is-visible{ opacity:1; transform:translateY(0); }
+
   .hero__content{ position:relative; z-index:2; text-align:center; padding:0 24px; max-width:900px; margin:0 auto; pointer-events:none; }
   .hero__content a, .hero__content button{ pointer-events:auto; }
 
@@ -351,10 +367,9 @@
   .filter-pill.is-active{ background:var(--cyan); color:#052330; border-color:var(--cyan); }
 
   /* overflow is toggled per-state in JS (visible while shown, hidden while collapsing) —
-     a permanent overflow:hidden here would clip any tooltip opening downward from a
-     badge in a category's last row. The extra bottom margin (vs. a plain gap) gives
-     that downward-opening tooltip room to land without colliding with the next
-     category's heading. */
+     needed so the max-height collapse transition actually clips; badge tooltips are a
+     separate fixed-position element appended near <body>, so they're never affected by
+     this ancestor's overflow either way. */
   .stack-group{ margin-bottom:76px; transition:opacity .3s ease, max-height .3s ease; }
   .stack-group__head{
     font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1.5px;
@@ -367,27 +382,7 @@
     position:relative; cursor:default;
   }
   .badge:hover{ border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 8px rgba(0,200,240,0.3); }
-  /* Always opens downward, positioned with top+margin and margin-left centering
-     (never bottom, never a negative top, never transform for the offset) — every
-     other combination we tried silently drops the first line of wrapped attr()
-     content in this rendering engine. A tooltip that runs past the viewport
-     bottom just needs a scroll; that's a far better failure mode than one that
-     hides content. */
-  .badge[data-note]:hover::after, .badge[data-note].is-active::after{
-    content:attr(data-note);
-    position:absolute; left:50%; margin-left:-90px; top:100%; margin-top:8px;
-    background:var(--surface); border:1px solid var(--cyan); color:var(--text);
-    padding:6px 10px; border-radius:4px; font-size:11px; white-space:normal; z-index:150;
-    width:180px; max-width:calc(100vw - 32px);
-    box-shadow:0 0 12px rgba(0,200,240,0.3);
-  }
-  /* re-anchored when centering would push the tooltip off the left/right edge */
-  .badge[data-note].edge-l:hover::after, .badge[data-note].edge-l.is-active::after{
-    left:0; margin-left:0;
-  }
-  .badge[data-note].edge-r:hover::after, .badge[data-note].edge-r.is-active::after{
-    left:auto; right:0; margin-left:0;
-  }
+  .badge.is-active{ border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 8px rgba(0,200,240,0.3); }
 
   /* ---------- PROJECTS ---------- */
   .project-grid{ display:grid; grid-template-columns:1fr; gap:20px; }
@@ -441,17 +436,6 @@
   .awards-col li::before{ content:''; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--amber); }
   .award-note{ position:relative; cursor:help; border-bottom:1px dotted var(--muted); }
   .award-note:hover, .award-note.is-active{ border-bottom-color:var(--cyan); color:var(--cyan); }
-  .award-note:hover::after, .award-note.is-active::after{
-    content:attr(data-note);
-    position:absolute; left:0; top:100%; margin-top:6px; width:220px; max-width:calc(100vw - 32px); white-space:normal;
-    background:var(--surface); border:1px solid var(--cyan); color:var(--text);
-    padding:8px 10px; border-radius:4px; font-size:11.5px; line-height:1.5; z-index:150;
-    box-shadow:0 0 12px rgba(0,200,240,0.3);
-  }
-  /* re-anchored to the right when the default left-aligned box would run off the right edge */
-  .award-note.edge-r:hover::after, .award-note.edge-r.is-active::after{
-    left:auto; right:0;
-  }
 
   /* ---------- CONTACT / FOOTER ---------- */
   .contact{ text-align:center; }
@@ -537,6 +521,7 @@
 <section class="hero" id="hero">
   <div id="three-mount" aria-hidden="true"></div>
   <div class="node-tooltip" id="nodeTooltip"></div>
+  <div class="data-tooltip" id="dataTooltip" role="tooltip"></div>
   <div class="hero__content">
     <h1 class="hero__name">AASHISH CHHABRA</h1>
     <p class="hero__subtitle">Senior Lead Engineer · Data &amp; Platform</p>
@@ -1194,42 +1179,78 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(function(el){ revealObserver.observe(el); });
 
-  /* ---------- Tooltip flip direction + tap-to-toggle (touch devices can't :hover) ---------- */
+  /* ---------- Single JS-positioned tooltip for every [data-note] element ----------
+     Replaces the old attr(data-note) + ::after pseudo-element pattern, which needed
+     four separate rounds of fixes (theme color, z-index vs. fixed nav, an engine bug
+     that silently dropped wrapped text when opened upward, overflow:hidden ancestor
+     clipping). One real element, position:fixed, appended near <body>: no ancestor
+     can clip it, and direction/clamping are computed from actual viewport space. */
   (function(){
-    var BADGE_TIP_W = 180;    // fixed width set in CSS for .badge tooltips
-    var AWARD_TIP_W = 220;    // fixed width set in CSS for .award-note tooltips
-    var EDGE_MARGIN = 12;
+    var tip = document.getElementById('dataTooltip');
+    var GAP = 8, MARGIN = 12;
+    var activeEl = null;   // element whose note is currently shown
+    var lockedEl = null;   // element pinned open by a click/tap (stays open past mouseleave)
 
-    // Tooltips always open downward (top:100% + margin) — every "opens above" scheme
-    // we tried (bottom+margin, bottom+calc, even a plain negative top px) silently
-    // dropped the first line of wrapped attr() content in this rendering engine, so
-    // we don't flip direction at all. Only horizontal re-anchoring is needed.
     function positionTip(el){
       var rect = el.getBoundingClientRect();
-      var vw = window.innerWidth;
-      if (el.classList.contains('badge')){
-        var center = rect.left + rect.width / 2;
-        el.classList.toggle('edge-l', center - BADGE_TIP_W / 2 < EDGE_MARGIN);
-        el.classList.toggle('edge-r', center + BADGE_TIP_W / 2 > vw - EDGE_MARGIN);
-      } else {
-        el.classList.toggle('edge-r', rect.left + AWARD_TIP_W > vw - EDGE_MARGIN);
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var tipRect = tip.getBoundingClientRect();
+      var tipW = tipRect.width, tipH = tipRect.height;
+
+      var left = rect.left + rect.width / 2 - tipW / 2;
+      if (left < MARGIN) left = MARGIN;
+      if (left + tipW > vw - MARGIN) left = vw - MARGIN - tipW;
+
+      var spaceBelow = vh - rect.bottom;
+      var top = (spaceBelow >= tipH + GAP || spaceBelow >= rect.top)
+        ? rect.bottom + GAP
+        : rect.top - tipH - GAP;
+      if (top < MARGIN) top = MARGIN;
+
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    }
+
+    function showTip(el){
+      var note = el.getAttribute('data-note');
+      if (!note) return;
+      activeEl = el;
+      tip.textContent = note;
+      tip.classList.add('is-visible');
+      positionTip(el);
+      el.classList.add('is-active');
+    }
+    function hideTip(el){
+      if (el) el.classList.remove('is-active');
+      if (!el || activeEl === el){
+        tip.classList.remove('is-visible');
+        activeEl = null;
       }
     }
 
-    var noteEls = document.querySelectorAll('.badge[data-note], .award-note');
+    var noteEls = document.querySelectorAll('[data-note]');
     noteEls.forEach(function(el){
-      el.addEventListener('mouseenter', function(){ positionTip(el); });
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      // A tap fires mouseenter + focus + click as one synthetic sequence, with no
+      // mouseleave in between. mouseenter/focus below are pure hover previews, so
+      // the click handler can't just toggle off whatever's already showing — it
+      // tracks its own "locked" state instead, separate from hover's activeEl.
+      el.addEventListener('mouseenter', function(){ showTip(el); });
+      el.addEventListener('mouseleave', function(){ if (lockedEl !== el) hideTip(el); });
+      // :focus-visible only matches real keyboard focus, not a tap's synthetic one.
+      el.addEventListener('focus', function(){
+        if (el.matches(':focus-visible')) showTip(el);
+      });
+      el.addEventListener('blur', function(){ if (lockedEl !== el) hideTip(el); });
       el.addEventListener('click', function(e){
-        positionTip(el);
-        var wasActive = el.classList.contains('is-active');
-        noteEls.forEach(function(other){ other.classList.remove('is-active'); });
-        if (!wasActive) el.classList.add('is-active');
         e.stopPropagation();
+        if (lockedEl === el){ lockedEl = null; hideTip(el); }
+        else { lockedEl = el; showTip(el); }
       });
     });
-    document.addEventListener('click', function(){
-      noteEls.forEach(function(el){ el.classList.remove('is-active'); });
-    });
+    document.addEventListener('click', function(){ lockedEl = null; hideTip(activeEl); });
+    window.addEventListener('scroll', function(){ if (activeEl) positionTip(activeEl); }, { passive: true });
+    window.addEventListener('resize', function(){ if (activeEl) positionTip(activeEl); });
   })();
 
   /* =========================================================
