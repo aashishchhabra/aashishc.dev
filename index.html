@@ -1377,8 +1377,23 @@
       });
     });
     document.addEventListener('click', function(){ lockedEl = null; hideTip(activeEl); });
-    window.addEventListener('scroll', function(){ if (activeEl) positionTip(activeEl); }, { passive: true });
-    window.addEventListener('resize', function(){ if (activeEl) positionTip(activeEl); });
+    // Follow the anchor while it is on screen; once it scrolls under the fixed
+    // nav or off the bottom, dismiss. Otherwise positionTip's top clamp pins a
+    // tap-locked tooltip to the top of the viewport after its badge has gone.
+    var navEl = document.querySelector('.nav');
+    function followOrDismiss(){
+      if (!activeEl) return;
+      var rect = activeEl.getBoundingClientRect();
+      var navBottom = navEl ? navEl.getBoundingClientRect().bottom : 0;
+      if (rect.bottom <= navBottom || rect.top >= window.innerHeight){
+        lockedEl = null;
+        hideTip(activeEl);
+      } else {
+        positionTip(activeEl);
+      }
+    }
+    window.addEventListener('scroll', followOrDismiss, { passive: true });
+    window.addEventListener('resize', followOrDismiss);
   })();
 
   /* =========================================================
