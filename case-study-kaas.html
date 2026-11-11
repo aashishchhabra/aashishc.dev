@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafka-as-a-Service — Case Study | Aashish Chhabra</title>
+<meta name="description" content="How I own the architecture of Kafka-as-a-Service, a managed multi-tenant Kafka platform for Airtel B2B Cloud customers — React front end, Spring Boot provisioner, Temporal workflows, and a fully automated Jenkins + Argo CD delivery pipeline.">
+<link rel="canonical" href="https://aashishc.dev/case-study-kaas.html">
+<script>
+  (function(){
+    try {
+      var saved = localStorage.getItem('theme');
+      var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch(e){}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-tokens.css">
+<style>
+  .container{ max-width:900px; margin:0 auto; padding:0 24px; }
+
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between; padding:18px 24px;
+    background:var(--nav-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(26,47,74,0.6);
+  }
+  .nav__back{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--cyan); }
+  .theme-toggle{
+    background:none; border:1px solid var(--border); border-radius:6px; padding:6px 9px;
+    color:var(--muted); font-size:14px; line-height:1; transition:all .2s ease;
+  }
+  .theme-toggle:hover{ border-color:var(--cyan); color:var(--cyan); }
+
+  main{ padding:120px 0 80px; }
+
+  .cs-kicker{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--cyan); letter-spacing:1px;
+    text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .cs-title{ font-size:34px; font-weight:700; letter-spacing:-0.5px; margin-bottom:14px; }
+  @media (min-width:768px){ .cs-title{ font-size:46px; } }
+  .cs-subtitle{ font-size:17px; color:var(--muted); margin-bottom:24px; max-width:640px; }
+  .cs-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:56px; }
+  .cs-tag{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text);
+    border:1px solid var(--border); border-radius:4px; padding:5px 11px; background:var(--surface);
+  }
+
+  section.cs-block{ margin-bottom:56px; }
+  .cs-h2{ font-size:24px; font-weight:600; margin-bottom:16px; }
+  .cs-body{ color:var(--text); font-size:15.5px; margin-bottom:14px; }
+  .cs-body:last-child{ margin-bottom:0; }
+  .cs-body strong{ color:var(--amber); }
+
+  /* ---------- Architecture diagram ---------- */
+  .diagram-wrap{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px;
+    margin-bottom:20px;
+  }
+  #archSvg{ width:100%; height:auto; display:block; }
+  .arch-node{ cursor:pointer; }
+  .arch-node rect{ transition:stroke .2s ease, fill .2s ease; }
+  .arch-node:hover rect{ stroke:var(--cyan); }
+  .arch-node.is-active rect{ stroke:var(--amber); stroke-width:2; }
+  .arch-node text{ pointer-events:none; }
+  .arch-hint{ font-size:12px; color:var(--muted); margin-bottom:16px; }
+
+  .detail-panel{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--cyan);
+    border-radius:6px; padding:22px 24px; min-height:110px; transition:border-color .2s ease;
+  }
+  .detail-panel__title{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:var(--amber); margin-bottom:8px; }
+  .detail-panel__body{ font-size:14.5px; color:var(--text); }
+
+  .cs-list{ margin:0; padding:0; list-style:none; }
+  .cs-list li{ position:relative; padding-left:20px; margin-bottom:10px; font-size:15px; color:var(--text); }
+  .cs-list li::before{ content:'▸'; position:absolute; left:0; color:var(--cyan); }
+
+  .cs-impact{ display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width:640px){ .cs-impact{ grid-template-columns:repeat(2,1fr); } }
+  @media (min-width:900px){ .cs-impact{ grid-template-columns:repeat(4,1fr); } }
+  .cs-impact__tile{ background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--amber); border-radius:6px; padding:18px; }
+  .cs-impact__label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:1px; margin-bottom:8px; display:block; }
+  .cs-impact__value{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; color:var(--amber); }
+
+  .cs-footer{ text-align:center; padding:40px 0; border-top:1px solid var(--border); margin-top:20px; }
+  .cs-footer a{ color:var(--cyan); font-family:'JetBrains Mono',monospace; font-size:13px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html#projects" class="nav__back mono">← aashishc.dev</a>
+  <button class="theme-toggle mono" id="themeToggle" aria-label="Toggle light/dark theme">◐</button>
+</nav>
+
+<main>
+  <div class="container">
+    <span class="cs-kicker">Case Study</span>
+    <h1 class="cs-title">Kafka-as-a-Service</h1>
+    <p class="cs-subtitle">Service owner and technical lead of a managed, multi-tenant Kafka platform built for Airtel B2B Cloud customers — architecture, technology choices, and service readiness, built as a modern product end to end rather than a cluster handed over with a README.</p>
+    <div class="cs-tags">
+      <span class="cs-tag">Kafka-as-a-Service</span>
+      <span class="cs-tag">React</span>
+      <span class="cs-tag">Java Spring Boot</span>
+      <span class="cs-tag">Temporal</span>
+      <span class="cs-tag">PostgreSQL + Redis</span>
+      <span class="cs-tag">Helm + Argo CD</span>
+    </div>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">The problem</h2>
+      <p class="cs-body">Airtel B2B Cloud customers need self-serve access to Kafka without each one standing up and operating their own cluster — the same problem the earlier bare-metal Kafka platform solved for internal teams, now as a product other businesses can provision, with the multi-tenancy, isolation, and support model that requires.</p>
+      <p class="cs-body">Provisioning a tenant's Kafka environment touches many systems — cluster creation, topic and ACL setup, quota enforcement — and these steps can take minutes and fail partway through. A simple request/response API isn't enough; a failure needs to resume safely rather than leave a tenant half-provisioned.</p>
+      <p class="cs-body">I own the technical direction: architecture, technology choices, pull-request reviews, security and bug analysis, and checking service readiness before each release. Being the service owner doesn't mean I wrote every component — developers and DevOps engineers on the team build alongside me.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">Architecture</h2>
+      <p class="arch-hint">Click a component to see what it does.</p>
+      <div class="diagram-wrap">
+        <div id="archSvg"></div>
+      </div>
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-panel__title" id="detailTitle">Kafka-as-a-Service</div>
+        <div class="detail-panel__body" id="detailBody">A managed, multi-tenant Kafka platform for Airtel B2B Cloud customers. Click any box above to see how a provisioning request actually moves through the system — from the web front end, through validation and the provisioner, into a durable workflow, with data, observability, and delivery wrapped around it.</div>
+      </div>
+    </section>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">Design decisions</h2>
+      <p class="cs-body"><strong>Temporal for long-running provisioning workflows.</strong> Provisioning a tenant's Kafka environment is a multi-step process that can take minutes and fail partway through. Rather than track progress with ad-hoc database flags, provisioning runs as a durable Temporal workflow — each step retries independently, state survives a service restart, and a partially-provisioned tenant resumes exactly where it left off instead of getting stuck.</p>
+      <p class="cs-body"><strong>Smithy for a contract-first API.</strong> Keeping frontend and backend in agreement is otherwise an easy place to drift. The API contract is defined in Smithy first, so client and server code are generated from one schema — a single source of truth instead of two things kept in sync by hand.</p>
+      <p class="cs-body"><strong>PostgreSQL for durability, Redis for pace.</strong> Tenant and provisioning state lives in PostgreSQL; Redis handles caching and rate limits so one noisy tenant can't starve the control plane for everyone else.</p>
+      <p class="cs-body"><strong>The same central delivery pipeline as everything else.</strong> Jenkins runs software-composition, code, and image security scans (Black Duck, Coverity, Wiz) on every change, and Argo CD handles deployment — the same central CI/CD framework used across the organisation, not a one-off pipeline built just for this service. I use Claude Code for pull-request review and security analysis on this service's provisioner, and to check that frontend and backend requests stay in agreement.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2 class="cs-h2">Outcomes</h2>
+      <div class="cs-impact">
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">SERVICE</span>
+          <div class="cs-impact__value">Owner & Technical Lead, since Feb 2026</div>
+        </div>
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">STACK</span>
+          <div class="cs-impact__value">React · Spring Boot · Temporal</div>
+        </div>
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">DATA</span>
+          <div class="cs-impact__value">PostgreSQL + Redis</div>
+        </div>
+        <div class="cs-impact__tile">
+          <span class="cs-impact__label">DELIVERY</span>
+          <div class="cs-impact__value">Jenkins + Argo CD, automated security scans</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cs-footer">
+      <a href="index.html#projects">← Back to all projects on aashishc.dev</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var themeToggle = document.getElementById('themeToggle');
+  function currentTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+  function updateThemeButton(){
+    themeToggle.textContent = currentTheme() === 'light' ? '◑' : '◐';
+    themeToggle.setAttribute('aria-label', currentTheme() === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+  }
+  themeToggle.addEventListener('click', function(){
+    var next = currentTheme() === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch(e){}
+    updateThemeButton();
+  });
+  updateThemeButton();
+
+  var nodes = [
+    { id:'frontend', x:260, y:10, w:160, h:40, label:['Web Front End (React)'], title:'Web Front End — React', body:'The interface Airtel B2B Cloud customers use to provision and manage their own Kafka environments — requesting new tenants, topics, and ACLs without filing a ticket.' },
+    { id:'validation', x:30, y:95, w:150, h:45, label:['Validation Service','(Smithy)'], title:'Validation Service — Smithy', body:'The API contract is defined in Smithy first, generating consistent client and server code — a single schema both sides of the request actually agree on, instead of drifting apart over time.' },
+    { id:'provisioner', x:260, y:95, w:160, h:45, label:['Provisioner','(Java Spring Boot)'], title:'Provisioner — Java Spring Boot', body:'The core service: validates requests, kicks off provisioning workflows, and enforces per-tenant quotas. This is where I spend most of my own review and security-analysis time, including with Claude Code.' },
+    { id:'workflow', x:500, y:95, w:150, h:45, label:['Workflow Engine','(Temporal)'], title:'Workflow Engine — Temporal', body:'Runs provisioning as a durable, multi-step workflow. Each step retries independently and survives a service restart, so a partially-provisioned tenant resumes exactly where it left off.' },
+    { id:'data', x:260, y:175, w:160, h:55, label:['Data Layer','(PostgreSQL + Redis)'], title:'Data Layer — PostgreSQL + Redis', body:'PostgreSQL holds tenant and provisioning state durably; Redis handles caching and rate limits so one noisy tenant can’t starve the control plane for everyone else.' },
+    { id:'observability', x:30, y:245, w:200, h:45, label:['Observability','(Prometheus, Grafana, Elastic)'], title:'Observability — Prometheus, Grafana, Elastic, Kibana', body:'Monitors both the service itself and the Kafka clusters it creates for tenants — the same observability discipline applied to the earlier bare-metal Kafka platform, now covering a multi-tenant product.' },
+    { id:'delivery', x:450, y:245, w:200, h:45, label:['Delivery','(Jenkins + Argo CD)'], title:'Delivery — Jenkins + Argo CD', body:'Jenkins runs software-composition, code, and image security scans (Black Duck, Coverity, Wiz) on every change; Argo CD deploys it. The same central CI/CD framework used across the organisation, not a one-off pipeline.' }
+  ];
+
+  var edges = [
+    ['frontend','validation'], ['frontend','provisioner'], ['validation','provisioner'],
+    ['provisioner','workflow'], ['provisioner','data'],
+    ['provisioner','observability'], ['workflow','observability'], ['delivery','provisioner']
+  ];
+
+  function buildDiagram(){
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 680 310');
+    svg.setAttribute('width', '100%');
+
+    var cyan = getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim() || '#00C8F0';
+    var border = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#1A2F4A';
+    var surface = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#0E1A2E';
+    var textColor = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#E8F4F8';
+
+    function centerOf(n){ return { x: n.x + n.w/2, y: n.y + n.h/2 }; }
+    function byId(id){ return nodes.filter(function(n){ return n.id === id; })[0]; }
+
+    edges.forEach(function(e){
+      var a = centerOf(byId(e[0])), b = centerOf(byId(e[1]));
+      var line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+      line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+      line.setAttribute('stroke', border);
+      line.setAttribute('stroke-width', '1.5');
+      svg.appendChild(line);
+    });
+
+    nodes.forEach(function(n){
+      var g = document.createElementNS(svgNS, 'g');
+      g.setAttribute('class', 'arch-node');
+      g.setAttribute('data-id', n.id);
+      g.setAttribute('tabindex', '0');
+      g.setAttribute('role', 'button');
+      g.setAttribute('aria-label', n.title);
+
+      var rect = document.createElementNS(svgNS, 'rect');
+      rect.setAttribute('x', n.x); rect.setAttribute('y', n.y);
+      rect.setAttribute('width', n.w); rect.setAttribute('height', n.h);
+      rect.setAttribute('rx', 7);
+      rect.setAttribute('fill', surface);
+      rect.setAttribute('stroke', border);
+      rect.setAttribute('stroke-width', '1.5');
+      g.appendChild(rect);
+
+      n.label.forEach(function(line, li){
+        var text = document.createElementNS(svgNS, 'text');
+        text.setAttribute('x', n.x + n.w/2);
+        text.setAttribute('y', n.y + n.h/2 + (li - (n.label.length-1)/2) * 13 + 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-family', 'JetBrains Mono, monospace');
+        text.setAttribute('font-size', '10.5');
+        text.setAttribute('fill', textColor);
+        text.textContent = line;
+        g.appendChild(text);
+      });
+
+      function activate(){
+        document.querySelectorAll('.arch-node').forEach(function(el){ el.classList.remove('is-active'); });
+        g.classList.add('is-active');
+        document.getElementById('detailTitle').textContent = n.title;
+        document.getElementById('detailBody').textContent = n.body;
+      }
+      g.addEventListener('click', activate);
+      g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); } });
+
+      svg.appendChild(g);
+    });
+
+    var container = document.getElementById('archSvg');
+    container.innerHTML = '';
+    container.appendChild(svg);
+  }
+  buildDiagram();
+  themeToggle.addEventListener('click', function(){ setTimeout(buildDiagram, 20); });
+})();
+</script>
+
+</body>
+</html>
