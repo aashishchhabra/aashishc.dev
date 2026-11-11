@@ -1030,12 +1030,12 @@
 
     <div class="contact__links reveal">
       <span class="contact__item">
-        <a class="contact__link" href="mailto:chhabra.aashish23@gmail.com"><span role="img" aria-label="Email">📧</span> chhabra.aashish23@gmail.com</a>
-        <button class="copy-btn mono" data-copy="chhabra.aashish23@gmail.com" aria-label="Copy email address">copy</button>
+        <a class="contact__link" data-track="contact-email" href="mailto:chhabra.aashish23@gmail.com"><span role="img" aria-label="Email">📧</span> chhabra.aashish23@gmail.com</a>
+        <button class="copy-btn mono" data-track="copy-email" data-copy="chhabra.aashish23@gmail.com" aria-label="Copy email address">copy</button>
       </span>
       <span class="contact__item">
-        <a class="contact__link" href="https://www.linkedin.com/in/aashishchhabra" target="_blank" rel="noopener"><span role="img" aria-label="Briefcase">💼</span> linkedin.com/in/aashishchhabra</a>
-        <button class="copy-btn mono" data-copy="linkedin.com/in/aashishchhabra" aria-label="Copy LinkedIn URL">copy</button>
+        <a class="contact__link" data-track="contact-linkedin" href="https://www.linkedin.com/in/aashishchhabra" target="_blank" rel="noopener"><span role="img" aria-label="Briefcase">💼</span> linkedin.com/in/aashishchhabra</a>
+        <button class="copy-btn mono" data-track="copy-linkedin" data-copy="linkedin.com/in/aashishchhabra" aria-label="Copy LinkedIn URL">copy</button>
       </span>
       <span class="contact__link"><span role="img" aria-label="Location pin">📍</span> Gurugram, Haryana, India</span>
     </div>
@@ -1048,11 +1048,11 @@
     <div class="resume-picker reveal">
       <span class="resume-picker__label">Download résumé (PDF) — by country format</span>
       <div class="resume-picker__links">
-        <a class="resume-picker__link" href="Aashish-Chhabra-Resume-India.pdf" target="_blank" rel="noopener">🇮🇳 India ↓</a>
-        <a class="resume-picker__link" href="Aashish-Chhabra-Resume-Australia.pdf" target="_blank" rel="noopener">🇦🇺 Australia ↓</a>
-        <a class="resume-picker__link" href="Aashish-Chhabra-CV-UK-Europe.pdf" target="_blank" rel="noopener">🇬🇧 UK &amp; Europe ↓</a>
+        <a class="resume-picker__link" data-track="resume-pdf-india" href="Aashish-Chhabra-Resume-India.pdf" target="_blank" rel="noopener">🇮🇳 India ↓</a>
+        <a class="resume-picker__link" data-track="resume-pdf-australia" href="Aashish-Chhabra-Resume-Australia.pdf" target="_blank" rel="noopener">🇦🇺 Australia ↓</a>
+        <a class="resume-picker__link" data-track="resume-pdf-uk-europe" href="Aashish-Chhabra-CV-UK-Europe.pdf" target="_blank" rel="noopener">🇬🇧 UK &amp; Europe ↓</a>
       </div>
-      <p class="resume-picker__alt mono">Prefer Word? <a href="Aashish-Chhabra-Resume-India.docx" download>India</a> · <a href="Aashish-Chhabra-Resume-Australia.docx" download>Australia</a> · <a href="Aashish-Chhabra-CV-UK-Europe.docx" download>UK &amp; Europe</a></p>
+      <p class="resume-picker__alt mono">Prefer Word? <a data-track="resume-docx-india" href="Aashish-Chhabra-Resume-India.docx" download>India</a> · <a data-track="resume-docx-australia" href="Aashish-Chhabra-Resume-Australia.docx" download>Australia</a> · <a data-track="resume-docx-uk-europe" href="Aashish-Chhabra-CV-UK-Europe.docx" download>UK &amp; Europe</a></p>
     </div>
 
     <div class="more-from-me reveal">
@@ -1070,6 +1070,7 @@
 
 <footer>
   <div class="footer-bar mono">© 2026 Aashish Chhabra · aashishc.dev</div>
+  <div class="footer-bar mono" style="margin-top:6px; font-size:11px;">This site counts visits anonymously, with no cookies.</div>
 </footer>
 
 <div class="toast mono" id="toast"></div>
@@ -1080,6 +1081,22 @@
 (function(){
   "use strict";
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Analytics events (GoatCounter; no cookies) ----------
+     Any element with data-track="<name>" is counted as an event on click.
+     Capture phase, because some tracked elements stop click propagation.
+     Does nothing when the counter script is blocked or not loaded. */
+  function track(name){
+    try {
+      if (window.goatcounter && window.goatcounter.count){
+        window.goatcounter.count({ path: name, title: name, event: true });
+      }
+    } catch(e){}
+  }
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('[data-track]');
+    if (el) track(el.getAttribute('data-track'));
+  }, true);
 
   /* =========================================================
      CONTACT CHANNELS — single config, one toggle flag
@@ -1116,13 +1133,14 @@
     CONTACT_NUMBERS.forEach(function(n){
       var digits = n.raw.replace('+', '');
       var countryName = n.countryLabel.replace(/^\S+\s*/, '');
+      var slug = countryName.toLowerCase();
       var chips = '';
       if (n.channels.call){
-        chips += '<a class="contact__chip" href="tel:' + n.raw + '">' +
+        chips += '<a class="contact__chip" data-track="contact-call-' + slug + '" href="tel:' + n.raw + '">' +
           '<span role="img" aria-label="Phone call">☎️</span> Call</a>';
       }
       if (n.channels.sms){
-        chips += '<a class="contact__chip" href="sms:' + n.raw + '">' +
+        chips += '<a class="contact__chip" data-track="contact-sms-' + slug + '" href="sms:' + n.raw + '">' +
           '<span role="img" aria-label="Text message">💬</span> SMS</a>';
       }
       if (n.channels.whatsappChat){
@@ -1130,7 +1148,7 @@
         var isCallPrefill = n.whatsappPrefill.toLowerCase().indexOf('call') !== -1;
         var note = 'Opens a WhatsApp chat pre-filled with a message' +
           (isCallPrefill ? ' proposing a call' : '') + ' — not a direct call link.';
-        chips += '<a class="contact__chip" href="' + waHref + '" target="_blank" rel="noopener" data-note="' + note + '">' +
+        chips += '<a class="contact__chip" data-track="contact-whatsapp-' + slug + '" href="' + waHref + '" target="_blank" rel="noopener" data-note="' + note + '">' +
           '<span role="img" aria-label="WhatsApp">🟢</span> WhatsApp</a>';
       }
       html +=
@@ -1139,7 +1157,7 @@
           '<div class="contact__number-row">' +
             '<span class="contact__item">' +
               '<span class="contact__link-static"><span role="img" aria-label="Mobile phone">📱</span> ' + n.display + '</span>' +
-              '<button class="copy-btn mono" data-copy="' + n.display + '" aria-label="Copy ' + countryName + ' phone number">copy</button>' +
+              '<button class="copy-btn mono" data-track="copy-phone-' + slug + '" data-copy="' + n.display + '" aria-label="Copy ' + countryName + ' phone number">copy</button>' +
             '</span>' +
             '<div class="contact__chips">' + chips + '</div>' +
           '</div>' +
@@ -1221,9 +1239,9 @@
     { label: 'Copy email address', hint: 'chhabra.aashish23@gmail.com', run: function(){ copyToClipboard('chhabra.aashish23@gmail.com').then(function(){ showToast('Copied chhabra.aashish23@gmail.com'); }); } },
     { label: 'Open LinkedIn', hint: '↗ new tab', run: function(){ window.open('https://www.linkedin.com/in/aashishchhabra', '_blank', 'noopener'); } },
     { label: 'Toggle light / dark theme', hint: function(){ return currentTheme() === 'light' ? '→ dark' : '→ light'; }, run: function(){ themeToggle.click(); } },
-    { label: 'Download résumé — India (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-India.pdf', '_blank', 'noopener'); } },
-    { label: 'Download résumé — Australia (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-Australia.pdf', '_blank', 'noopener'); } },
-    { label: 'Download résumé — UK & Europe (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-CV-UK-Europe.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — India (PDF)', hint: '.pdf', run: function(){ track('resume-pdf-india'); window.open('Aashish-Chhabra-Resume-India.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — Australia (PDF)', hint: '.pdf', run: function(){ track('resume-pdf-australia'); window.open('Aashish-Chhabra-Resume-Australia.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — UK & Europe (PDF)', hint: '.pdf', run: function(){ track('resume-pdf-uk-europe'); window.open('Aashish-Chhabra-CV-UK-Europe.pdf', '_blank', 'noopener'); } },
     { label: 'Read the Kafka Platform case study', hint: '↗ deep dive', run: function(){ window.open('case-study-kafka.html', '_blank', 'noopener'); } }
   ];
 
@@ -2202,5 +2220,6 @@
 })();
 </script>
 
+<script data-goatcounter="https://aashishc.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

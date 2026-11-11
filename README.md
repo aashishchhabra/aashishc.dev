@@ -42,6 +42,7 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 - Command palette (`⌘K` / `Ctrl+K`) — jump to any section or run an action from the keyboard
 - One-click copy on email/phone with toast confirmation
 - Downloadable PDF résumé — 3 country-localized variants (India / Australia / UK & Europe), generated from one structured facts file
+- Anonymous, cookie-free visit counting via GoatCounter (`aashishc.goatcounter.com`); elements with a `data-track` attribute are counted as click events (`resume-pdf-*`, `resume-docx-*`, `contact-*`, `copy-*`)
 - Open Graph / Twitter meta tags with a generated social preview image
 - Placeholder cards in the footer for future `blog.aashishc.dev` / video subdomains
 
