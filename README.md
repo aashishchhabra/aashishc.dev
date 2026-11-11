@@ -52,8 +52,8 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 - `case-study-kaas.html` — deep-dive case study for Kafka-as-a-Service, with an interactive architecture diagram
 - `shared-tokens.css` — theme variables and base resets shared by every page
 - `resume-data/facts.yaml` — single source of truth for résumé content, tagged against the private career-history evidence register
-- `resume-data/generate_resume.py` — reportlab generator; run `python3 resume-data/generate_resume.py` after editing `facts.yaml` to regenerate all 3 PDFs
-- `Aashish-Chhabra-Resume-India.pdf`, `Aashish-Chhabra-Resume-Australia.pdf`, `Aashish-Chhabra-Resume-UK-Europe.pdf` — the 3 generated, country-localized résumés
+- `resume-data/generate_resume.py` — generator (reportlab + python-docx); run `python3 resume-data/generate_resume.py` after editing `facts.yaml` to regenerate every PDF and Word file
+- `Aashish-Chhabra-Resume-India`, `Aashish-Chhabra-Resume-Australia`, `Aashish-Chhabra-CV-UK-Europe` (each as `.pdf` and `.docx`) — the generated résumés: India 2 pages, Australia 3 pages, UK & Europe a 2-page CV
 - `og-image.png` — social share preview image (1200×630)
 - `CNAME` — custom domain for GitHub Pages
 - `README.md` — this file

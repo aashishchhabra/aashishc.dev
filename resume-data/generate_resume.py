@@ -1,76 +1,78 @@
 #!/usr/bin/env python3
-"""Generate the 3 country-localized résumé PDFs from resume-data/facts.yaml.
+"""Generate the country-specific résumés (PDF + Word) from resume-data/facts.yaml.
 
-facts.yaml is the single source of truth for résumé content — edit it, then
-re-run this script. Do not hand-edit the generated PDFs; that drift (a résumé
-maintained by hand, separately from the site) is exactly what caused the
-previous résumé to carry stale and incorrect claims.
+facts.yaml is the single source of truth for content: edit it, then re-run this
+script. Do not hand-edit the generated files.
 
 Usage:
     python3 resume-data/generate_resume.py
 
-Requires: pyyaml, reportlab (pip install pyyaml reportlab)
+Requires: pyyaml, reportlab, python-docx
 
-Outputs (at the repo root, alongside index.html):
-    Aashish-Chhabra-Resume-India.pdf
-    Aashish-Chhabra-Resume-Australia.pdf
-    Aashish-Chhabra-Resume-UK-Europe.pdf
+Each country is a genuinely different document (length, sections, order), per
+the conventions researched for that market:
+    India        2 pages  short summary, dense key-skills block, tools per role
+    Australia    3 pages  work rights up front, key achievements, full role
+                          detail, referees line
+    UK & Europe  2 pages  titled as a CV, personal profile, tight bullets,
+                          sponsorship stated
+
+All output is single-column, table-free, real text with contact details in the
+body (not a page header/footer), which is what applicant tracking systems parse
+most reliably.
 """
-import yaml
 from pathlib import Path
 
+import yaml
+from docx import Document
+from docx.enum.text import WD_BREAK  # noqa: F401  (kept for manual page-break tweaks)
+from docx.shared import Mm, Pt, RGBColor
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.platypus import HRFlowable, Paragraph, SimpleDocTemplate, Spacer
 
 ROOT = Path(__file__).resolve().parent.parent
 FACTS_PATH = Path(__file__).resolve().parent / "facts.yaml"
 
-ACCENT = colors.HexColor("#0089AD")
-TEXT = colors.HexColor("#101826")
-MUTED = colors.HexColor("#54677D")
-RULE = colors.HexColor("#D8E3EF")
+ACCENT_HEX, TEXT_HEX, MUTED_HEX = "0B6E8A", "101826", "4A5B6E"
 
-# Country-specific rendering rules. Everything else (wording, role framing,
-# ordering) is shared across all 3 variants by design — one role framing
-# ("Platform Engineering & Architecture Leader"), not a role x country matrix.
 COUNTRIES = {
     "india": {
         "label": "India",
-        "filename": "Aashish-Chhabra-Resume-India.pdf",
-        "phone_keys": ["phone_india"],
-        "bullet_priorities": {1, 2},
-        "show_au_status": False,
+        "basename": "Aashish-Chhabra-Resume-India",
+        "phones": ["phone_india"],
+        "max_tier": 2,
+        "expected_pages": 2,
+        "sections": ["summary", "key_skills", "experience", "credentials", "awards", "education"],
+        "summary_heading": "PROFESSIONAL SUMMARY",
+        "show_tools": True,
+        "font_scale": 0.97,
     },
     "australia": {
         "label": "Australia",
-        "filename": "Aashish-Chhabra-Resume-Australia.pdf",
-        # Published fully per the site owner's explicit decision — same
-        # treatment as the India number (visible, not withheld).
-        "phone_keys": ["phone_india", "phone_australia"],
-        "bullet_priorities": {1, 2},
-        "show_au_status": True,
+        "basename": "Aashish-Chhabra-Resume-Australia",
+        "phones": ["phone_australia", "phone_india"],
+        "max_tier": 3,
+        "expected_pages": 3,
+        "sections": ["summary", "key_achievements", "skills", "experience", "credentials", "awards", "education", "referees"],
+        "summary_heading": "EXECUTIVE SUMMARY",
+        "show_tools": True,
+        "font_scale": 1.06,
     },
     "uk_europe": {
         "label": "UK & Europe",
-        "filename": "Aashish-Chhabra-Resume-UK-Europe.pdf",
-        "phone_keys": ["phone_india"],
-        # Trimmed to priority-1 bullets to respect the tighter 2-page UK/EU
-        # convention; India and Australia keep the fuller priority-2 set.
-        "bullet_priorities": {1},
-        "show_au_status": False,
+        "basename": "Aashish-Chhabra-CV-UK-Europe",
+        "phones": ["phone_india"],
+        "max_tier": 2,
+        "expected_pages": 2,
+        "sections": ["summary", "experience", "skills", "credentials", "education"],
+        "summary_heading": "PERSONAL PROFILE",
+        "show_tools": False,
+        "font_scale": 1.04,
     },
 }
-
-
-def esc(text):
-    """Escape raw fact text for reportlab's Paragraph markup (a small XML-like
-    dialect) — needed because facts.yaml has plain ampersands (e.g. "AT&T",
-    "Platform & Big Data") that would otherwise be parsed as malformed entity
-    references and silently corrupt the rendered text."""
-    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def load_facts():
@@ -78,98 +80,169 @@ def load_facts():
         return yaml.safe_load(f)
 
 
-def build_styles():
-    styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle(name="NameHeader", fontName="Helvetica-Bold", fontSize=20, textColor=TEXT, leading=24, spaceAfter=4))
-    styles.add(ParagraphStyle(name="RoleHeader", fontName="Helvetica", fontSize=12, textColor=ACCENT, spaceAfter=8))
-    styles.add(ParagraphStyle(name="ContactLine", fontName="Helvetica", fontSize=9, textColor=MUTED, spaceAfter=6))
-    styles.add(ParagraphStyle(name="AUStatus", fontName="Helvetica-Bold", fontSize=9.5, textColor=ACCENT, spaceAfter=8))
-    styles.add(ParagraphStyle(name="SectionHead", fontName="Helvetica-Bold", fontSize=11, textColor=ACCENT, spaceBefore=10, spaceAfter=4))
-    styles.add(ParagraphStyle(name="JobTitle", fontName="Helvetica-Bold", fontSize=10.3, textColor=TEXT, spaceAfter=0))
-    styles.add(ParagraphStyle(name="JobMeta", fontName="Helvetica-Oblique", fontSize=8.8, textColor=MUTED, spaceAfter=3))
-    styles.add(ParagraphStyle(name="JobBullet", fontName="Helvetica", fontSize=9.2, textColor=TEXT, leading=12.2, leftIndent=12, spaceAfter=2.5))
-    styles.add(ParagraphStyle(name="BodyText2", fontName="Helvetica", fontSize=9.2, textColor=TEXT, leading=12.6, spaceAfter=5))
-    return styles
+def build_blocks(key, facts):
+    """Country-specific document as a flat list of (kind, payload) blocks.
 
-
-def contact_line(facts, cfg):
+    Both renderers consume this, so the PDF and the Word file can't drift apart.
+    """
+    cfg = COUNTRIES[key]
     c = facts["contact"]
-    parts = [c["email"]]
-    for key in cfg["phone_keys"]:
-        parts.append(c[key]["display"])
-    parts.append(c["linkedin_display"])
-    parts.append(c["portfolio_display"])
-    parts.append(c["location"])
-    return " &nbsp;·&nbsp; ".join(esc(p) for p in parts)
+    contact = [c["email"]] + [c[p] for p in cfg["phones"]] + [c["linkedin_display"], c["portfolio_display"], c["location"]]
+
+    blocks = [("name", c["name"]), ("role", facts["role_framing"]), ("contact", "  |  ".join(contact))]
+    status = facts.get("status_line", {}).get(key)
+    if status:
+        blocks.append(("status", status))
+    blocks.append(("rule", None))
+
+    for section in cfg["sections"]:
+        if section == "summary":
+            blocks += [("h", cfg["summary_heading"]), ("body", (None, facts["summary"][key]))]
+        elif section == "key_achievements":
+            blocks.append(("h", "KEY ACHIEVEMENTS"))
+            blocks += [("bullet", a["text"]) for a in facts["key_achievements"]]
+        elif section == "key_skills":
+            blocks += [("h", "KEY SKILLS"), ("body", (None, ", ".join(facts["key_skills"])))]
+        elif section == "skills":
+            blocks.append(("h", "TECHNICAL SKILLS"))
+            blocks += [("body", (g["category"] + ": ", ", ".join(g["items"]))) for g in facts["skills"]]
+        elif section == "experience":
+            blocks.append(("h", "PROFESSIONAL EXPERIENCE"))
+            for job in facts["experience"]:
+                blocks.append(("job", (job["title"], job["employer"])))
+                blocks.append(("meta", job["period"] + "  |  " + job["location"]))
+                blocks += [("bullet", b["text"]) for b in job["bullets"] if b["tier"] <= cfg["max_tier"]]
+                if cfg["show_tools"]:
+                    blocks.append(("tools", ("Tools: ", job["tools"])))
+                blocks.append(("gap", None))
+        elif section == "credentials":
+            blocks += [("h", "CERTIFICATIONS & TRAINING"), ("body", (None, "; ".join(facts["credentials"])))]
+        elif section == "awards":
+            blocks.append(("h", "AWARDS"))
+            blocks += [("body", (None, a)) for a in facts["awards"]]
+        elif section == "education":
+            blocks.append(("h", "EDUCATION"))
+            blocks += [("body", (None, e)) for e in facts["education"]]
+        elif section == "referees":
+            blocks += [("h", "REFEREES"), ("body", (None, facts["referees"]))]
+    return blocks
 
 
-def build_pdf(country_key, facts):
-    cfg = COUNTRIES[country_key]
-    styles = build_styles()
-    c = facts["contact"]
-    out_path = ROOT / cfg["filename"]
+# ---------------------------------------------------------------- PDF
 
+def esc(text):
+    """Escape fact text for reportlab's XML-like Paragraph markup ("AT&T")."""
+    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def pdf_styles(scale):
+    accent, text, muted = (colors.HexColor("#" + h) for h in (ACCENT_HEX, TEXT_HEX, MUTED_HEX))
+
+    def st(name, size, font="Helvetica", color=text, lead=1.36, **kw):
+        return ParagraphStyle(name, fontName=font, fontSize=size * scale, leading=size * scale * lead, textColor=color, **kw)
+
+    return {
+        "name": st("name", 20, "Helvetica-Bold", lead=1.2, spaceAfter=3),
+        "role": st("role", 12, color=accent, spaceAfter=6),
+        "contact": st("contact", 9, color=muted, spaceAfter=4),
+        "status": st("status", 9.4, "Helvetica-Bold", color=accent, spaceAfter=6),
+        "h": st("h", 10.8, "Helvetica-Bold", color=accent, spaceBefore=9, spaceAfter=4),
+        "job": st("job", 10.2, "Helvetica-Bold", spaceAfter=1, keepWithNext=1),
+        "meta": st("meta", 8.9, "Helvetica-Oblique", color=muted, spaceAfter=3, keepWithNext=1),
+        "bullet": st("bullet", 9.2, leftIndent=11, firstLineIndent=-8, spaceAfter=2.5),
+        "body": st("body", 9.2, spaceAfter=4),
+        "tools": st("tools", 8.7, color=muted, leftIndent=3, spaceAfter=2),
+    }
+
+
+def render_pdf(key, blocks, path):
+    cfg = COUNTRIES[key]
+    s = pdf_styles(cfg["font_scale"])
     doc = SimpleDocTemplate(
-        str(out_path),
-        pagesize=A4,
-        topMargin=16 * mm,
-        bottomMargin=14 * mm,
-        leftMargin=18 * mm,
-        rightMargin=18 * mm,
-        title=f"Aashish Chhabra — Resume ({cfg['label']})",
-        author=c["name"],
+        str(path), pagesize=A4, topMargin=15 * mm, bottomMargin=14 * mm, leftMargin=18 * mm, rightMargin=18 * mm,
+        title="Aashish Chhabra - " + ("CV" if "CV" in cfg["basename"] else "Resume") + " (" + cfg["label"] + ")",
+        author="Aashish Chhabra",
     )
-
-    story = [
-        Paragraph(esc(c["name"]), styles["NameHeader"]),
-        Paragraph(esc(facts["role_framing"]), styles["RoleHeader"]),
-        Paragraph(contact_line(facts, cfg), styles["ContactLine"]),
-    ]
-
-    if cfg["show_au_status"]:
-        story.append(Paragraph(esc(c["au_status"]["text"]), styles["AUStatus"]))
-
-    story.append(HRFlowable(width="100%", thickness=0.6, color=RULE, spaceAfter=8))
-
-    story.append(Paragraph("SUMMARY", styles["SectionHead"]))
-    story.append(Paragraph(esc(facts["summary"]["text"]), styles["BodyText2"]))
-
-    story.append(Paragraph("EXPERIENCE", styles["SectionHead"]))
-    for job in facts["experience"]:
-        story.append(Paragraph(f'<b>{esc(job["title"])}</b> — {esc(job["employer"])}', styles["JobTitle"]))
-        story.append(Paragraph(f'{esc(job["location"])} &nbsp;·&nbsp; {esc(job["period"])}', styles["JobMeta"]))
-        for b in job["bullets"]:
-            if b.get("priority", 1) in cfg["bullet_priorities"]:
-                story.append(Paragraph(f'• {esc(b["text"])}', styles["JobBullet"]))
-        story.append(Spacer(1, 5))
-
-    story.append(Paragraph("TECHNICAL SKILLS", styles["SectionHead"]))
-    for group in facts["skills"]:
-        items = ", ".join(esc(i) for i in group["items"])
-        story.append(Paragraph(f'<b>{esc(group["category"])}:</b> {items}', styles["BodyText2"]))
-
-    story.append(Paragraph("CREDENTIALS", styles["SectionHead"]))
-    story.append(Paragraph(
-        "; ".join(f'{esc(cred["name"])} ({esc(cred["year"])})' for cred in facts["credentials"]),
-        styles["BodyText2"],
-    ))
-
-    story.append(Paragraph("EDUCATION", styles["SectionHead"]))
-    for e in facts["education"]:
-        story.append(Paragraph(
-            f'{esc(e["degree"])} — {esc(e["institution"])} ({esc(e["period"])})',
-            styles["BodyText2"],
-        ))
-
+    story = []
+    for kind, payload in blocks:
+        if kind == "rule":
+            story.append(HRFlowable(width="100%", thickness=0.6, color=colors.HexColor("#C9D6E2"), spaceAfter=4))
+        elif kind == "gap":
+            story.append(Spacer(1, 5))
+        elif kind == "job":
+            story.append(Paragraph("<b>" + esc(payload[0]) + "</b>, " + esc(payload[1]), s["job"]))
+        elif kind == "bullet":
+            story.append(Paragraph("• " + esc(payload), s["bullet"]))
+        elif kind in ("body", "tools"):
+            label, text = payload
+            story.append(Paragraph(("<b>" + esc(label) + "</b>" if label else "") + esc(text), s[kind]))
+        else:
+            story.append(Paragraph(esc(payload), s[kind]))
     doc.build(story)
-    return out_path
+    return doc.page
+
+
+# ---------------------------------------------------------------- Word
+
+def render_docx(key, blocks, path):
+    cfg = COUNTRIES[key]
+    scale = cfg["font_scale"]
+    doc = Document()
+    sec = doc.sections[0]
+    sec.page_width, sec.page_height = Mm(210), Mm(297)
+    sec.top_margin, sec.bottom_margin = Mm(15), Mm(14)
+    sec.left_margin = sec.right_margin = Mm(18)
+    normal = doc.styles["Normal"]
+    normal.font.name = "Arial"
+    normal.font.size = Pt(9.2 * scale)
+    doc.core_properties.author = "Aashish Chhabra"
+    doc.core_properties.title = "Aashish Chhabra (" + cfg["label"] + ")"
+
+    def para(runs, size, color=TEXT_HEX, before=0, after=3, style=None, keep=False):
+        p = doc.add_paragraph(style=style)
+        pf = p.paragraph_format
+        pf.space_before, pf.space_after, pf.keep_with_next = Pt(before), Pt(after), keep
+        for text, bold, italic in runs:
+            r = p.add_run(text)
+            r.bold, r.italic = bold, italic
+            r.font.size = Pt(size * scale)
+            r.font.color.rgb = RGBColor.from_string(color)
+        return p
+
+    for kind, payload in blocks:
+        if kind == "name":
+            para([(payload, True, False)], 20, after=2)
+        elif kind == "role":
+            para([(payload, False, False)], 12, ACCENT_HEX, after=4)
+        elif kind == "contact":
+            para([(payload, False, False)], 9, MUTED_HEX, after=3)
+        elif kind == "status":
+            para([(payload, True, False)], 9.4, ACCENT_HEX, after=4)
+        elif kind in ("rule", "gap"):
+            continue
+        elif kind == "h":
+            para([(payload, True, False)], 10.8, ACCENT_HEX, before=9, after=3, keep=True)
+        elif kind == "job":
+            para([(payload[0], True, False), (", " + payload[1], False, False)], 10.2, before=5, after=0, keep=True)
+        elif kind == "meta":
+            para([(payload, False, True)], 8.9, MUTED_HEX, after=2, keep=True)
+        elif kind == "bullet":
+            para([(payload, False, False)], 9.2, after=2, style="List Bullet")
+        elif kind in ("body", "tools"):
+            label, text = payload
+            runs = ([(label, True, False)] if label else []) + [(text, False, False)]
+            para(runs, 8.7 if kind == "tools" else 9.2, MUTED_HEX if kind == "tools" else TEXT_HEX, after=3)
+    doc.save(str(path))
 
 
 def main():
     facts = load_facts()
-    for key in COUNTRIES:
-        path = build_pdf(key, facts)
-        print(f"Generated {path.relative_to(ROOT)}")
+    for key, cfg in COUNTRIES.items():
+        blocks = build_blocks(key, facts)
+        pages = render_pdf(key, blocks, ROOT / (cfg["basename"] + ".pdf"))
+        render_docx(key, blocks, ROOT / (cfg["basename"] + ".docx"))
+        flag = "" if pages == cfg["expected_pages"] else "   <-- expected %d, adjust content or font_scale" % cfg["expected_pages"]
+        print("%-12s %s.pdf/.docx  %d page(s)%s" % (cfg["label"], cfg["basename"], pages, flag))
 
 
 if __name__ == "__main__":

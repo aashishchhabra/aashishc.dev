@@ -228,6 +228,9 @@
     color:var(--text); transition:all .2s ease;
   }
   .resume-picker__link:hover{ border-color:var(--cyan); color:var(--cyan); }
+  .resume-picker__alt{ margin-top:12px; font-size:11.5px; color:var(--muted); }
+  .resume-picker__alt a{ color:var(--muted); text-decoration:underline; text-underline-offset:3px; }
+  .resume-picker__alt a:hover{ color:var(--cyan); }
 
   .scroll-cue{
     color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:12px;
@@ -1042,8 +1045,9 @@
       <div class="resume-picker__links">
         <a class="resume-picker__link" href="Aashish-Chhabra-Resume-India.pdf" target="_blank" rel="noopener">🇮🇳 India ↓</a>
         <a class="resume-picker__link" href="Aashish-Chhabra-Resume-Australia.pdf" target="_blank" rel="noopener">🇦🇺 Australia ↓</a>
-        <a class="resume-picker__link" href="Aashish-Chhabra-Resume-UK-Europe.pdf" target="_blank" rel="noopener">🇬🇧 UK &amp; Europe ↓</a>
+        <a class="resume-picker__link" href="Aashish-Chhabra-CV-UK-Europe.pdf" target="_blank" rel="noopener">🇬🇧 UK &amp; Europe ↓</a>
       </div>
+      <p class="resume-picker__alt mono">Prefer Word? <a href="Aashish-Chhabra-Resume-India.docx" download>India</a> · <a href="Aashish-Chhabra-Resume-Australia.docx" download>Australia</a> · <a href="Aashish-Chhabra-CV-UK-Europe.docx" download>UK &amp; Europe</a></p>
     </div>
 
     <div class="more-from-me reveal">
@@ -1214,7 +1218,7 @@
     { label: 'Toggle light / dark theme', hint: function(){ return currentTheme() === 'light' ? '→ dark' : '→ light'; }, run: function(){ themeToggle.click(); } },
     { label: 'Download résumé — India (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-India.pdf', '_blank', 'noopener'); } },
     { label: 'Download résumé — Australia (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-Australia.pdf', '_blank', 'noopener'); } },
-    { label: 'Download résumé — UK & Europe (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-UK-Europe.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — UK & Europe (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-CV-UK-Europe.pdf', '_blank', 'noopener'); } },
     { label: 'Read the Kafka Platform case study', hint: '↗ deep dive', run: function(){ window.open('case-study-kafka.html', '_blank', 'noopener'); } }
   ];
 
