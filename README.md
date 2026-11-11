@@ -41,7 +41,7 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 - Light/dark theme toggle (persisted, defaults to system preference)
 - Command palette (`⌘K` / `Ctrl+K`) — jump to any section or run an action from the keyboard
 - One-click copy on email/phone with toast confirmation
-- Downloadable PDF résumé, kept in sync with on-site content
+- Downloadable PDF résumé — 3 country-localized variants (India / Australia / UK & Europe), generated from one structured facts file
 - Open Graph / Twitter meta tags with a generated social preview image
 - Placeholder cards in the footer for future `blog.aashishc.dev` / video subdomains
 
@@ -49,7 +49,11 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 
 - `index.html` — the main single-page site (HTML/CSS/JS inline)
 - `case-study-kafka.html` — deep-dive case study for the Kafka Platform project, with an interactive architecture diagram
-- `Aashish-Chhabra-Resume.pdf` — downloadable résumé (generated with reportlab; regenerate if site content changes)
+- `case-study-kaas.html` — deep-dive case study for Kafka-as-a-Service, with an interactive architecture diagram
+- `shared-tokens.css` — theme variables and base resets shared by every page
+- `resume-data/facts.yaml` — single source of truth for résumé content, tagged against the private career-history evidence register
+- `resume-data/generate_resume.py` — reportlab generator; run `python3 resume-data/generate_resume.py` after editing `facts.yaml` to regenerate all 3 PDFs
+- `Aashish-Chhabra-Resume-India.pdf`, `Aashish-Chhabra-Resume-Australia.pdf`, `Aashish-Chhabra-Resume-UK-Europe.pdf` — the 3 generated, country-localized résumés
 - `og-image.png` — social share preview image (1200×630)
 - `CNAME` — custom domain for GitHub Pages
 - `README.md` — this file

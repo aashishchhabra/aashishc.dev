@@ -215,6 +215,20 @@
   .btn--ghost{ background:transparent; color:var(--text); }
   .btn--ghost:hover{ border-color:var(--cyan); color:var(--cyan); }
 
+  /* ---------- RESUME PICKER ---------- */
+  .resume-picker{ margin-bottom:28px; }
+  .resume-picker__label{
+    display:block; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
+    letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;
+  }
+  .resume-picker__links{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+  .resume-picker__link{
+    display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:6px;
+    border:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--text); transition:all .2s ease;
+  }
+  .resume-picker__link:hover{ border-color:var(--cyan); color:var(--cyan); }
+
   .scroll-cue{
     color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:12px;
     display:flex; flex-direction:column; align-items:center; gap:6px;
@@ -988,8 +1002,13 @@
       <span class="contact__link"><span role="img" aria-label="Location pin">📍</span> Gurugram, Haryana, India</span>
     </div>
 
-    <div class="reveal" style="margin-bottom:20px;">
-      <a class="btn btn--ghost" href="Aashish-Chhabra-Resume.pdf" target="_blank" rel="noopener">Download résumé (PDF) ↓</a>
+    <div class="resume-picker reveal">
+      <span class="resume-picker__label">Download résumé (PDF) — by country format</span>
+      <div class="resume-picker__links">
+        <a class="resume-picker__link" href="Aashish-Chhabra-Resume-India.pdf" target="_blank" rel="noopener">🇮🇳 India ↓</a>
+        <a class="resume-picker__link" href="Aashish-Chhabra-Resume-Australia.pdf" target="_blank" rel="noopener">🇦🇺 Australia ↓</a>
+        <a class="resume-picker__link" href="Aashish-Chhabra-Resume-UK-Europe.pdf" target="_blank" rel="noopener">🇬🇧 UK &amp; Europe ↓</a>
+      </div>
     </div>
 
     <div class="more-from-me reveal">
@@ -1090,7 +1109,9 @@
     { label: 'Copy email address', hint: 'chhabra.aashish23@gmail.com', run: function(){ copyToClipboard('chhabra.aashish23@gmail.com').then(function(){ showToast('Copied chhabra.aashish23@gmail.com'); }); } },
     { label: 'Open LinkedIn', hint: '↗ new tab', run: function(){ window.open('https://www.linkedin.com/in/aashishchhabra', '_blank', 'noopener'); } },
     { label: 'Toggle light / dark theme', hint: function(){ return currentTheme() === 'light' ? '→ dark' : '→ light'; }, run: function(){ themeToggle.click(); } },
-    { label: 'Download résumé (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — India (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-India.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — Australia (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-Australia.pdf', '_blank', 'noopener'); } },
+    { label: 'Download résumé — UK & Europe (PDF)', hint: '.pdf', run: function(){ window.open('Aashish-Chhabra-Resume-UK-Europe.pdf', '_blank', 'noopener'); } },
     { label: 'Read the Kafka Platform case study', hint: '↗ deep dive', run: function(){ window.open('case-study-kafka.html', '_blank', 'noopener'); } }
   ];
 

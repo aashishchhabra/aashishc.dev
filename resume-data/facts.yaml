@@ -1,0 +1,173 @@
+# Single source of truth for all 3 résumé variants (India / Australia / UK & Europe).
+#
+# This is the only place résumé facts get entered or corrected. Generated against
+# the confidence-graded evidence register in the private career-history document
+# (Version 3, 11 Nov 2026) — register IDs below trace each fact back to its
+# register row, so any future correction starts here, not in the PDF or the site.
+#
+# Confidence key (as used in the register): Confirmed / Supported / Approximate /
+# Résumé-only / Open / Excluded. Only Confirmed/Supported/Approximate facts are
+# used verbatim below; nothing marked Résumé-only or Open appears here.
+#
+# `countries`: which résumé variants a fact appears in. Omit the key entirely for
+# "all three". Values: india, australia, uk_europe.
+#
+# `priority` on an experience bullet: 1 = always included, 2 = trimmed first when
+# a country's page-length convention is tighter (used for Australia/UK & Europe;
+# India keeps every priority-1 and -2 bullet since a denser multi-page CV is
+# acceptable there for 12+ years of experience).
+
+role_framing: "Platform Engineering & Architecture Leader"
+
+positioning:
+  register_id: "Section 14"
+  text: >-
+    A hands-on platform engineering and architecture leader whose career has moved
+    from application development, to running large data platforms, to building the
+    automation and security that engineering teams depend on, to designing and
+    owning platform products for Airtel B2B Cloud customers.
+
+contact:
+  name: "Aashish Chhabra"
+  email: "chhabra.aashish23@gmail.com"
+  linkedin_display: "linkedin.com/in/aashishchhabra"
+  linkedin_url: "https://www.linkedin.com/in/aashishchhabra"
+  portfolio_display: "aashishc.dev"
+  portfolio_url: "https://aashishc.dev/"
+  location: "Gurugram, Haryana, India"
+  phone_india:
+    display: "+91 78755 70666"
+    countries: [india, australia]
+  phone_australia:
+    display: "+61 481 146 605"
+    countries: [australia]
+  au_status:
+    register_id: "R45"
+    text: "Australian Permanent Resident (subclass 190) — able to work in Australia without employer sponsorship."
+    countries: [australia]
+  experience_years: "12+"
+
+summary:
+  register_ids: ["R6", "R9", "R11", "R17", "R21", "R24", "R25", "R30", "R31", "R32", "R34", "R35"]
+  text: >-
+    Platform engineering and architecture leader with 12+ years of experience, spanning
+    application development, large-scale data platform administration, and the design
+    of automation, security and platform products other engineering teams depend on.
+    Personally built the central CI/CD framework connecting 170+ repositories to
+    automated, centrally-secured pipelines; service owner and technical lead of
+    Kafka-as-a-Service, a managed multi-tenant Kafka platform for Airtel B2B Cloud
+    customers. Provides line and functional leadership across Development and DevOps.
+
+experience:
+  - register_ids: ["R2", "R3", "R24", "R25", "R30", "R31", "R32", "R34", "R35", "R39", "R40"]
+    employer: "Xtelify Limited (formerly Bharti Airtel Limited)"
+    location: "Gurugram, India"
+    title: "Senior Lead Engineer, Data Techops"
+    period: "Dec 2024 – Present"
+    bullets:
+      - register_id: "R24"
+        priority: 1
+        text: "Personally built and maintain a central, marker-file-driven CI/CD framework that connects 170+ repositories to automated build, test and security-scan pipelines."
+      - register_id: "R25"
+        priority: 1
+        text: "Led the cutover of image security scanning from Prisma Cloud to Wiz across 170+ repositories in one central change, with no repository-level work required from developers."
+      - register_id: "R31/R32"
+        priority: 1
+        text: "Service owner and technical lead of Kafka-as-a-Service, a managed multi-tenant Kafka platform for Airtel B2B Cloud customers — architecture, technology choices (React, Spring Boot, Temporal, PostgreSQL, Redis, Helm, Jenkins, Argo CD), pull-request reviews, and service readiness."
+      - register_id: "R30"
+        priority: 2
+        text: "Contribute to the architecture and packaging of CDE (Converged Data Engine), Airtel's internal Data Mesh platform, as it is turned into a B2B Cloud service."
+      - register_id: "R34/R35"
+        priority: 1
+        text: "Provide line and functional leadership across Development and DevOps — hiring, performance reviews, and technical direction."
+      - register_id: "R39/R40"
+        priority: 2
+        text: "Use Claude Code for pull-request review, security and bug analysis, and frontend/backend consistency checks; lead the introduction of AI-assisted engineering practices across the team."
+  - register_ids: ["R2", "R17", "R18", "R19", "R20", "R21"]
+    employer: "Bharti Airtel Limited → Xtelify Limited"
+    location: "Gurugram, India"
+    title: "Lead Engineer"
+    period: "Jun 2021 – Nov 2024"
+    bullets:
+      - register_id: "R17"
+        priority: 1
+        text: "Engineered and ran a 9-broker Kafka platform carrying ~40 Gbps of combined traffic (bytes in plus out, including replication), with dual authentication, automated rebalancing, and full observability."
+      - register_id: "R18"
+        priority: 1
+        text: "Set Airtel's Elastic Stack monitoring standards across VMs, bare metal and Kubernetes, and drove adoption."
+      - register_id: "R19/R20"
+        priority: 2
+        text: "Led and contributed to the move from Docker Swarm and server installs to OpenShift; set up Spark Operator, Trino and JupyterHub for developer teams."
+      - register_id: "R21"
+        priority: 2
+        text: "Designed an early single-workflow CI/CD approach (2023), later rebuilt into the central framework above."
+  - register_ids: ["R11", "R12", "R13", "R14", "R15"]
+    employer: "Bharti Airtel Limited"
+    location: "Gurugram, India"
+    title: "Senior Software Engineer"
+    period: "Sep 2019 – May 2021"
+    bullets:
+      - register_id: "R11/R12"
+        priority: 1
+        text: "Sole administrator of the production Cloudera platform as it grew from ~15 to ~390 servers."
+      - register_id: "R13/R14"
+        priority: 1
+        text: "Planned the CDH 5.8 → CDP 7.1.6 migration and replaced the NameNode server with no business downtime."
+      - register_id: "R15"
+        priority: 2
+        text: "Planned and deployed disaster recovery for the production platform."
+  - register_ids: ["R9"]
+    employer: "NCR Corporation"
+    location: "Gurugram, India"
+    title: "Senior Software Engineer"
+    period: "Jan 2018 – Sep 2019"
+    bullets:
+      - register_id: "R9"
+        priority: 1
+        text: "Built and ran an Enterprise Data Lake on Hortonworks HDP end to end — installs, upgrades, Kerberos/Active Directory, Ranger, Sqoop/Hive pipelines, on-call support."
+  - register_ids: ["R6", "R7", "R8", "R44"]
+    employer: "Tech Mahindra"
+    location: "Pune, India"
+    title: "Software Engineer"
+    period: "Jun 2014 – Dec 2017"
+    bullets:
+      - register_id: "R6"
+        priority: 1
+        text: "Built Java/JSP application screens and SQL reporting logic for an AT&T quotations system."
+      - register_id: "R7/R8"
+        priority: 2
+        text: "Joined the pilot moving quotations data into Hadoop, then the AT&T Quotations Warehouse System — cluster planning, Sqoop/Hive/Oozie pipelines. Hortonworks HDP Certified Developer, 2017."
+
+skills:
+  - category: "Platform & Big Data"
+    items: ["Cloudera CDH/CDP", "Hortonworks HDP", "Apache Kafka", "Apache Hive", "SQOOP", "Spark Operator", "Trino", "YARN", "Zookeeper", "Apache Airflow"]
+  - category: "DevOps & Delivery"
+    items: ["Ansible", "Jenkins CI/CD", "Central CI/CD Framework (marker-file driven)", "Black Duck", "Coverity", "Wiz", "Temporal", "Argo CD", "Helm"]
+  - category: "Cloud & Containers"
+    items: ["OpenShift (OCP)", "Kubernetes", "Docker Swarm", "Docker", "Microsoft Azure (AZ-900)", "Airtel B2B Cloud"]
+  - category: "Observability"
+    items: ["Elastic Stack (ELK)", "Grafana", "Prometheus", "Kafka UI"]
+  - category: "Languages & Data"
+    items: ["Python", "Java", "React", "Spring Boot", "PostgreSQL", "Redis", "Shell Scripting", "MySQL", "Oracle SQL"]
+  - category: "Systems"
+    items: ["RHEL/CentOS 7-8", "Kernel Tuning", "Systemd", "Bare Metal Administration"]
+  - category: "AI-Assisted Engineering"
+    register_id: "R39/R40"
+    items: ["Claude Code", "GitHub Copilot", "Cursor"]
+
+credentials:
+  - register_id: "R44"
+    name: "Hortonworks HDP Certified Developer"
+    year: "2017"
+  - register_id: "R44"
+    name: "Microsoft Azure Fundamentals (AZ-900)"
+    year: "2024"
+  - register_id: "R44"
+    name: "IIM Indore — Management Development Programme"
+    year: "2024"
+
+education:
+  - register_id: "R5"
+    degree: "B.Tech, Electronics and Communication Engineering"
+    institution: "Global Institute of Technology, Jaipur (Rajasthan Technical University, Kota)"
+    period: "2010 – 2014"
