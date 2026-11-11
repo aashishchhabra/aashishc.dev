@@ -742,7 +742,7 @@
     <div id="stackGroups">
       <div class="stack-group reveal" data-category="ran">
         <div class="stack-group__head">Ran day to day</div>
-        <p class="stack-group__sub">Platforms I administered in production and answered for.</p>
+        <p class="stack-group__sub">Platforms I administered or operated on in production and answered for.</p>
         <div class="stack-group__badges">
           <span class="badge" data-note="Sole administrator as it grew from ~15 to ~390 servers">Cloudera CDH/CDP</span>
           <span class="badge" data-note="Built and ran the Enterprise Data Lake at NCR">Hortonworks HDP</span>
@@ -753,6 +753,7 @@
           <span class="badge" data-note="Pipelines across every platform">Jenkins</span>
           <span class="badge" data-note="Kafka health dashboards">Grafana</span>
           <span class="badge" data-note="Topics and permissions for the Kafka platform">Kafka UI</span>
+          <span class="badge" data-note="Helm deployments, production troubleshooting of container workloads, security-context hardening; led and contributed to the move from Docker Swarm">OpenShift (OCP)</span>
           <span class="badge">RHEL/CentOS 7–8</span>
           <span class="badge" data-note="Network buffers, interrupt handling and file-handle limits for Kafka brokers">Kernel Tuning</span>
           <span class="badge">Systemd</span>
@@ -782,6 +783,7 @@
           <span class="badge" data-note="Tenant and provisioning data">PostgreSQL</span>
           <span class="badge" data-note="Caching & rate limits">Redis</span>
           <span class="badge" data-note="Service and cluster metrics">Prometheus</span>
+          <span class="badge" data-note="Implemented for Kafka-as-a-Service observability">OpenTelemetry</span>
           <span class="badge" data-note="Packaging">Helm</span>
           <span class="badge" data-note="Deployment">Argo CD</span>
           <span class="badge" data-note="Contributing to packaging platforms and services for B2B customers">Airtel B2B Cloud</span>
@@ -796,7 +798,6 @@
           <span class="badge" data-note="Application tracing">Elasticsearch APM</span>
           <span class="badge" data-note="Centrally managed agents on VMs, bare metal and Kubernetes">Fleet</span>
           <span class="badge" data-note="Health-check monitoring">Synthetics</span>
-          <span class="badge" data-note="Led and contributed to the move from Docker Swarm and server installs">OpenShift (OCP)</span>
           <span class="badge" data-note="Runs Spark jobs on Kubernetes">Spark Operator</span>
           <span class="badge" data-note="On Kubernetes with Kerberos sign-in">Trino</span>
           <span class="badge" data-note="Notebooks for developers, with LDAP sign-in">JupyterHub</span>
@@ -832,7 +833,6 @@
         <p class="stack-group__sub">Certified or exposed to, not run in depth.</p>
         <div class="stack-group__badges">
           <span class="badge" data-note="AZ-900 certified">Microsoft Azure</span>
-          <span class="badge">OpenTelemetry</span>
           <span class="badge" data-note="As a data source for Hadoop ingestion">Oracle</span>
         </div>
       </div>
@@ -1802,12 +1802,12 @@
     },
     stack: function(arg){
       var groups = {
-        ran: 'Cloudera CDH/CDP, Hortonworks HDP, Apache Kafka, YARN, Zookeeper, Kerberos & Ranger, Jenkins, Grafana, Kafka UI, RHEL/CentOS 7-8, Kernel Tuning, Systemd',
+        ran: 'Cloudera CDH/CDP, Hortonworks HDP, Apache Kafka, YARN, Zookeeper, Kerberos & Ranger, Jenkins, Grafana, Kafka UI, OpenShift (OCP), RHEL/CentOS 7-8, Kernel Tuning, Systemd',
         built: 'Central CI/CD Framework, Python automation, Ansible automation, Kafka cluster provisioning, Shell Scripting',
-        own: 'Kafka-as-a-Service stack: React, Smithy, Java Spring Boot, Temporal, PostgreSQL, Redis, Prometheus, Helm, Argo CD; Airtel B2B Cloud',
-        setup: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, OpenShift (OCP), Spark Operator, Trino, JupyterHub, Black Duck, Coverity, Wiz',
+        own: 'Kafka-as-a-Service stack: React, Smithy, Java Spring Boot, Temporal, PostgreSQL, Redis, Prometheus, OpenTelemetry, Helm, Argo CD; Airtel B2B Cloud',
+        setup: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, Spark Operator, Trino, JupyterHub, Black Duck, Coverity, Wiz',
         used: 'Java, Pandas, SQL, MySQL, SQL Server, Apache Hive, SQOOP, Oozie, Apache Airflow, Kubernetes, Docker, Docker Swarm, Cluster Shell, RPM/TAR Packaging',
-        familiar: 'Microsoft Azure (AZ-900), OpenTelemetry, Oracle'
+        familiar: 'Microsoft Azure (AZ-900), Oracle'
       };
       if (!arg) return ['grouped by depth: ran, built, own, setup, used, familiar', 'run `stack <group>` for the list, e.g. `stack ran`.'];
       var key = arg.toLowerCase();

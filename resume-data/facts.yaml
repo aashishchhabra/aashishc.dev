@@ -146,7 +146,7 @@ skills:
   - category: "Cloud & Containers"
     items: ["OpenShift (OCP)", "Kubernetes", "Docker Swarm", "Docker", "Microsoft Azure (AZ-900)", "Airtel B2B Cloud"]
   - category: "Observability"
-    items: ["Elastic Stack (ELK)", "Grafana", "Prometheus", "Kafka UI"]
+    items: ["Elastic Stack (ELK)", "Grafana", "Prometheus", "OpenTelemetry", "Kafka UI"]
   - category: "Languages & Data"
     items: ["Python", "Java", "React", "Spring Boot", "PostgreSQL", "Redis", "Shell Scripting", "MySQL", "Oracle SQL"]
   - category: "Systems"
