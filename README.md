@@ -1,6 +1,6 @@
 # aashishc.dev
 
-Personal portfolio site for Aashish Chhabra — Senior Lead DevOps & Big Data Platform Engineer.
+Personal portfolio site for Aashish Chhabra — Senior Lead Engineer, platform engineering and architecture leader.
 
 Single-page site built with plain HTML, CSS, and JavaScript — no build step, no local dependencies. Everything lives in `index.html`. The one exception is [Three.js](https://threejs.org/) (r128, loaded via `<script>` tags from jsDelivr) which drives the interactive 3D node cluster in the hero; if it fails to load, the hero gracefully falls back to a lightweight 2D canvas animation.
 
