@@ -3,7 +3,7 @@
 # This is the only place résumé facts get entered or corrected. Written against
 # the confidence-graded evidence register in the private career-history document
 # (Version 4, 24 Nov 2026); `register_id` traces each fact back to its register
-# row ("owner-stated" bullets map to R46-R49 in version 4). Owner corrections
+# row ("owner-stated" bullets map to R46-R50 in version 4). Owner corrections
 # from November 2026, all now recorded in version 4:
 #   - OpenTelemetry was implemented for Kafka-as-a-Service observability.
 #   - OpenShift work is hands-on (Helm deployments, production troubleshooting,
@@ -12,6 +12,8 @@
 #   - 19 PB (R16, "résumé only" in the register) is confirmed: the Hadoop data
 #     on the ~390-node Cloudera cluster he administered. Resolves Open item 4.
 #   - The OpenShift Local set-up on virtual machines was his own work.
+#   - As Cloudera administrator he supported big-data ETL workloads (Spark and
+#     Ab Initio jobs) and helped developers tune queries and job stages (R50).
 #   - CDE's Airflow environments were handed to the support and BAU team
 #     (the register, R27, says "a peer").
 #   - Day-to-day Airflow work means writing DAGs for housekeeping jobs, plus
@@ -203,11 +205,14 @@ experience:
     employer: "Bharti Airtel Limited"
     location: "Gurugram, India"
     period: "September 2019 – May 2021"
-    tools: "Cloudera CDH and CDP, HDFS, YARN, Python, Shell, Ansible, Jenkins, Apache Airflow"
+    tools: "Cloudera CDH and CDP, HDFS, YARN, Apache Spark, Ab Initio (as workloads on the platform), Python, Shell, Ansible, Jenkins, Apache Airflow"
     bullets:
       - register_id: "R11/R12"
         tier: 1
-        text: "Sole administrator of the production Cloudera platform as it grew from about 15 to about 390 servers and about 19 PB of Hadoop data: installed, configured, upgraded and scaled it, and resolved problems from operating-system and network faults to data-job issues."
+        text: "Sole administrator of the production Cloudera platform as it grew from about 15 to about 390 servers and about 19 PB of Hadoop data: installed, configured, upgraded and scaled it, and resolved operating-system and network faults."
+      - register_id: "owner-stated"
+        tier: 1
+        text: "Supported the big-data ETL workloads running on it, including Spark and Ab Initio jobs, and helped developers tune the performance of their queries and job stages."
       - register_id: "R13/R14"
         tier: 1
         text: "Planned and worked on the migration from CDH 5.8 to CDP 7.1.6 with developers and operations, and planned and executed the replacement of the NameNode server with no business downtime."
