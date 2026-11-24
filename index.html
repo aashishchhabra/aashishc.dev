@@ -762,6 +762,10 @@
           <span class="badge" data-note="Kafka health dashboards">Grafana</span>
           <span class="badge" data-note="Topics and permissions for the Kafka platform">Kafka UI</span>
           <span class="badge" data-note="Helm deployments, production troubleshooting of container workloads, security-context hardening; led and contributed to the move from Docker Swarm">OpenShift (OCP)</span>
+          <span class="badge" data-note="Deploying, running and troubleshooting container workloads">Kubernetes</span>
+          <span class="badge" data-note="Building and running containerised applications">Docker</span>
+          <span class="badge" data-note="Chart deployments on OpenShift and Kubernetes; packaging for Kafka-as-a-Service">Helm</span>
+          <span class="badge" data-note="Airflow environments and schedules for housekeeping and data jobs">Apache Airflow</span>
           <span class="badge">RHEL/CentOS 7–8</span>
           <span class="badge" data-note="Network buffers, interrupt handling and file-handle limits for Kafka brokers">Kernel Tuning</span>
           <span class="badge">Systemd</span>
@@ -792,7 +796,6 @@
           <span class="badge" data-note="Caching & rate limits">Redis</span>
           <span class="badge" data-note="Service and cluster metrics">Prometheus</span>
           <span class="badge" data-note="Implemented for Kafka-as-a-Service observability">OpenTelemetry</span>
-          <span class="badge" data-note="Packaging">Helm</span>
           <span class="badge" data-note="Deployment">Argo CD</span>
           <span class="badge" data-note="Contributing to packaging platforms and services for B2B customers">Airtel B2B Cloud</span>
         </div>
@@ -827,9 +830,6 @@
           <span class="badge" data-note="Transformations across Hadoop layers">Apache Hive</span>
           <span class="badge" data-note="Relational databases → Hadoop ingestion">SQOOP</span>
           <span class="badge" data-note="Scheduled chains of data jobs">Oozie</span>
-          <span class="badge" data-note="Schedules for housekeeping and data jobs">Apache Airflow</span>
-          <span class="badge">Kubernetes</span>
-          <span class="badge">Docker</span>
           <span class="badge">Docker Swarm</span>
           <span class="badge" data-note="Bulk ops across production clusters">Cluster Shell</span>
           <span class="badge">RPM/TAR Packaging</span>
@@ -1847,11 +1847,11 @@
     },
     stack: function(arg){
       var groups = {
-        ran: 'Cloudera CDH/CDP, Hortonworks HDP, Apache Kafka, YARN, Zookeeper, Kerberos & Ranger, Jenkins, Grafana, Kafka UI, OpenShift (OCP), RHEL/CentOS 7-8, Kernel Tuning, Systemd',
+        ran: 'Cloudera CDH/CDP, Hortonworks HDP, Apache Kafka, YARN, Zookeeper, Kerberos & Ranger, Jenkins, Grafana, Kafka UI, OpenShift (OCP), Kubernetes, Docker, Helm, Apache Airflow, RHEL/CentOS 7-8, Kernel Tuning, Systemd',
         built: 'Central CI/CD Framework, Python automation, Ansible automation, Kafka cluster provisioning, Shell Scripting',
         own: 'Kafka-as-a-Service stack: React, Smithy, Java Spring Boot, Temporal, PostgreSQL, Redis, Prometheus, OpenTelemetry, Helm, Argo CD; Airtel B2B Cloud',
         setup: 'Elastic Stack (ELK), Elasticsearch APM, Fleet, Synthetics, Spark Operator, Trino, JupyterHub, Black Duck, Coverity, Wiz',
-        used: 'Java, Pandas, SQL, MySQL, SQL Server, Apache Hive, SQOOP, Oozie, Apache Airflow, Kubernetes, Docker, Docker Swarm, Cluster Shell, RPM/TAR Packaging',
+        used: 'Java, Pandas, SQL, MySQL, SQL Server, Apache Hive, SQOOP, Oozie, Docker Swarm, Cluster Shell, RPM/TAR Packaging',
         familiar: 'Microsoft Azure (AZ-900), Oracle'
       };
       if (!arg) return ['grouped by depth: ran, built, own, setup, used, familiar', 'run `stack <group>` for the list, e.g. `stack ran`.'];
