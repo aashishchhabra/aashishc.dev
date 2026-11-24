@@ -88,9 +88,13 @@ def build_blocks(key, facts):
     cfg = COUNTRIES[key]
     c = facts["contact"]
     phones = [c[p] for p in cfg["phones"]]
-    if key == "australia" and not facts.get("au_voice_sms_available", False):
-        # A recruiter who phones the Australian number gets no answer, so say so.
-        phones = [c["phone_australia"] + " (WhatsApp only)", c["phone_india"] + " (calls and WhatsApp)"]
+    if key == "australia":
+        if facts.get("au_voice_sms_available", False):
+            # A single local number is what Australian recruiters expect.
+            phones = [c["phone_australia"]]
+        else:
+            # A recruiter who phones the Australian number gets no answer, so say so.
+            phones = [c["phone_australia"] + " (WhatsApp only)", c["phone_india"] + " (calls and WhatsApp)"]
     contact = [c["email"]] + phones + [c["linkedin_display"], c["portfolio_display"], c["location"]]
 
     blocks = [("name", c["name"]), ("role", facts["role_framing"]), ("contact", "  |  ".join(contact))]

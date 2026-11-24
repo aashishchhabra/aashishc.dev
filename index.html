@@ -1103,11 +1103,12 @@
      Rendered before the copy-btn and tooltip wiring below, so both of
      those querySelectorAll passes naturally pick up these elements too.
      ========================================================= */
-  // Flip to true once the Australian SIM is recharged and can receive calls
-  // and SMS directly. WhatsApp chat on the AU number is unaffected by this
-  // flag — it runs over data, not the SIM's voice/SMS balance, so it stays
-  // on whenever the AU number is shown at all.
-  var AU_VOICE_SMS_AVAILABLE = false;
+  // True while the Australian number can take ordinary calls and SMS
+  // (currently via international roaming). Set to false if that lapses: the
+  // Call and SMS buttons for that number disappear and WhatsApp, which runs
+  // over data, stays. Keep in step with au_voice_sms_available in
+  // resume-data/facts.yaml.
+  var AU_VOICE_SMS_AVAILABLE = true;
 
   var CONTACT_NUMBERS = [
     {
@@ -1122,7 +1123,9 @@
       raw: '+61481146605',
       display: '+61 481 146 605',
       channels: { call: AU_VOICE_SMS_AVAILABLE, sms: AU_VOICE_SMS_AVAILABLE, whatsappChat: true },
-      whatsappPrefill: 'Hi Aashish, could we do a quick call?'
+      whatsappPrefill: AU_VOICE_SMS_AVAILABLE
+        ? 'Hi Aashish, I came across your portfolio and would like to connect.'
+        : 'Hi Aashish, could we do a quick call?'
     }
   ];
 

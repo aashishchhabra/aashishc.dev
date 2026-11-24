@@ -32,10 +32,12 @@ contact:
   phone_india: "+91 78755 70666"
   phone_australia: "+61 481 146 605"
 
-# Whether the Australian number currently takes ordinary calls and SMS. While
-# false, the Australian résumé labels it "WhatsApp only". Keep in step with
-# AU_VOICE_SMS_AVAILABLE in index.html: flip both when the SIM is recharged.
-au_voice_sms_available: false
+# Whether the Australian number currently takes ordinary calls and SMS
+# (currently via international roaming). While true, the Australian résumé
+# lists only that number. If set to false, it lists both numbers labelled
+# "WhatsApp only" and "calls and WhatsApp". Keep in step with
+# AU_VOICE_SMS_AVAILABLE in index.html.
+au_voice_sms_available: true
 
 # One-line status shown directly under the contact line, per country.
 status_line:
