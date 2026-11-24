@@ -12,6 +12,12 @@
 #   - 19 PB (R16, "résumé only" in the register) is confirmed: the Hadoop data
 #     on the ~390-node Cloudera cluster he administered. Resolves Open item 4.
 #   - The OpenShift Local set-up on virtual machines was his own work.
+#   - CDE's Airflow environments were handed to the support and BAU team
+#     (the register, R27, says "a peer").
+#   - Day-to-day Airflow work means writing DAGs for housekeeping jobs, plus
+#     Python and shell alerting scripts for systems and open-source tools
+#     without built-in alerting. This is separate from running Airflow
+#     environments.
 # Still unconfirmed and left out: the Innovation Program web tool and the 5/5
 # customer-satisfaction scores (Tech Mahindra); Tech Mahindra design,
 # estimation and testing duties are deliberately omitted.
@@ -139,7 +145,7 @@ experience:
         text: "Service owner and technical lead of Kafka-as-a-Service, a managed multi-tenant Kafka platform for Airtel B2B Cloud customers: architecture, technology choices (React, Smithy, Java Spring Boot, Temporal, PostgreSQL, Redis, Helm, Argo CD), pull-request reviews, security analysis and service readiness."
       - register_id: "owner-stated"
         tier: 1
-        text: "Work hands-on every day with OpenShift, Kubernetes, Docker, Helm and Apache Airflow: deploying Helm charts, troubleshooting production container workloads and running Airflow workflows."
+        text: "Work hands-on every day with OpenShift, Kubernetes, Docker, Helm and Apache Airflow: deploying Helm charts, troubleshooting production container workloads and writing Airflow DAGs."
       - register_id: "owner-stated"
         tier: 2
         text: "Implemented OpenTelemetry for Kafka-as-a-Service observability, alongside Prometheus, Grafana and Elastic monitoring of the service and the clusters it creates."
@@ -148,7 +154,7 @@ experience:
         text: "Contribute to the architecture and packaging of CDE (Converged Data Engine), Airtel's in-house Data Mesh platform, as a B2B Cloud service, covering the cloud environment, networks, sign-in integration and customer readiness."
       - register_id: "R27"
         tier: 2
-        text: "From early 2024, was responsible for the Airflow environments and automatic environment creation in CDE's internal build, then handed the day-to-day running of those environments to a peer once internal teams were using them."
+        text: "From early 2024, was responsible for the Airflow environments and automatic environment creation in CDE's internal build, then handed their day-to-day running to the support and BAU team once internal teams were using them."
       - register_id: "R34/R35"
         tier: 1
         text: "Provide line and functional leadership across Development and DevOps: hiring and interviewing, mentoring, performance reviews, talent discussions and technical direction."
@@ -180,6 +186,9 @@ experience:
       - register_id: "R20"
         tier: 2
         text: "Set up Spark Operator, Trino (community Helm charts, company sign-in) and JupyterHub (LDAP sign-in) for developer teams."
+      - register_id: "owner-stated"
+        tier: 2
+        text: "Wrote Airflow DAGs to schedule housekeeping jobs, and Python and shell scripts that raise alerts from systems with no built-in alerting, including open-source tools whose alerting is limited to the paid enterprise edition."
       - register_id: "owner-stated"
         tier: 2
         text: "Set up OpenShift Local on several virtual machines so developers could debug in production-like isolation."
