@@ -108,7 +108,7 @@ def build_blocks(key, facts):
             blocks += [("h", cfg["summary_heading"]), ("body", (None, facts["summary"][key]))]
         elif section == "key_achievements":
             blocks.append(("h", "KEY ACHIEVEMENTS"))
-            blocks += [("bullet", a["text"]) for a in facts["key_achievements"]]
+            blocks += [("lbullet", (a["label"], a["text"])) for a in facts["key_achievements"]]
         elif section == "key_skills":
             blocks += [("h", "KEY SKILLS"), ("body", (None, ", ".join(facts["key_skills"])))]
         elif section == "skills":
@@ -181,6 +181,8 @@ def render_pdf(key, blocks, path):
             story.append(Paragraph("<b>" + esc(payload[0]) + "</b>, " + esc(payload[1]), s["job"]))
         elif kind == "bullet":
             story.append(Paragraph("• " + esc(payload), s["bullet"]))
+        elif kind == "lbullet":
+            story.append(Paragraph("• <b>" + esc(payload[0]) + ":</b> " + esc(payload[1]), s["bullet"]))
         elif kind in ("body", "tools"):
             label, text = payload
             story.append(Paragraph(("<b>" + esc(label) + "</b>" if label else "") + esc(text), s[kind]))
@@ -236,6 +238,8 @@ def render_docx(key, blocks, path):
             para([(payload, False, True)], 8.9, MUTED_HEX, after=2, keep=True)
         elif kind == "bullet":
             para([(payload, False, False)], 9.2, after=2, style="List Bullet")
+        elif kind == "lbullet":
+            para([(payload[0] + ": ", True, False), (payload[1], False, False)], 9.2, after=2, style="List Bullet")
         elif kind in ("body", "tools"):
             label, text = payload
             runs = ([(label, True, False)] if label else []) + [(text, False, False)]

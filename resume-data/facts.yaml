@@ -69,18 +69,19 @@ summary:
     Python, Cloudera, Elastic.
     Personally built a central CI/CD framework serving 170+ repositories; service
     owner and technical lead of Kafka-as-a-Service for Airtel B2B Cloud.
-  # Australia: executive summary.
+  # Australia: executive summary. Story and way of working only; the numbers
+  # live in key_achievements so the two don't repeat each other.
   australia: >-
     Hands-on platform engineering and architecture leader with 12+ years of
     experience. My career has moved from application development, to running
     large data platforms, to building the automation and security that
     engineering teams depend on, to designing and owning platform products for
-    Airtel B2B Cloud customers. I personally built the central CI/CD framework
-    that connects 170+ repositories to automated, centrally secured pipelines,
-    and I am service owner and technical lead of Kafka-as-a-Service, a managed
-    multi-tenant Kafka platform. I provide line and functional leadership across
-    Development and DevOps, and I still review code, designs and technical
-    decisions myself.
+    Airtel B2B Cloud customers. My habit is to build something, set the standard
+    for it, then hand it to the team that will run it, as I did with Cloudera
+    administration, Elastic monitoring and CDE's Airflow environments. I lead
+    Development and DevOps engineers through hiring, mentoring and technical
+    direction, still review code and designs myself, and use AI-assisted
+    engineering practices in my own work while introducing them across my team.
   # UK: personal profile.
   uk_europe: >-
     Platform engineering and architecture leader with 12+ years of experience,
@@ -92,18 +93,21 @@ summary:
     for Airtel B2B Cloud customers. Line and functional leader across Development
     and DevOps who remains hands-on.
 
-# Australia only: a short highlights block before the role-by-role detail.
+# Australia only: headline numbers, one line each, worded differently from
+# the matching role bullets (which keep the full detail).
 key_achievements:
-  - register_id: "R24"
-    text: "Personally built a central, marker-file-driven CI/CD framework now connecting 170+ repositories to automated build, test and security-scan pipelines."
-  - register_id: "R25"
-    text: "Moved image security scanning from Prisma Cloud to Wiz across 170+ repositories in one central change, with no work required from developers."
+  - register_id: "R24/R25"
+    label: "Central CI/CD framework"
+    text: "built it myself; it now serves 170+ repositories, and switched their image scanning to Wiz in one central change"
+  - register_id: "R31"
+    label: "Kafka-as-a-Service"
+    text: "service owner and technical lead of a multi-tenant managed Kafka platform for Airtel B2B Cloud customers"
   - register_id: "R17"
-    text: "Engineered and ran a 9-broker bare-metal Kafka platform carrying about 40 Gbps of combined traffic (bytes in plus bytes out, including replication)."
-  - register_id: "R11/R12"
-    text: "Sole administrator of a production Cloudera platform as it grew from about 15 to about 390 servers holding about 19 PB of Hadoop data."
-  - register_id: "R14"
-    text: "Planned and executed the replacement of the Cloudera NameNode server with no business downtime."
+    label: "Kafka at scale"
+    text: "9 bare-metal brokers carrying about 40 Gbps of combined traffic"
+  - register_id: "R11/R12/R16/R14"
+    label: "Large data platform"
+    text: "sole administrator as it grew to about 390 servers and 19 PB, including a NameNode replacement with no business downtime"
 
 # India only: dense keyword block (job portals match on skills).
 key_skills:
