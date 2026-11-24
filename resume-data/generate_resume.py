@@ -14,7 +14,7 @@ the conventions researched for that market:
     India        3 pages  short summary, dense key-skills block, tools per role
     Australia    3 pages  work rights up front, key achievements, full role
                           detail, referees line
-    UK & Europe  2 pages  titled as a CV, personal profile, tight bullets,
+    UK & Europe  3 pages  titled as a CV, personal profile, tight bullets,
                           sponsorship stated
 
 All output is single-column, table-free, real text with contact details in the
@@ -65,12 +65,12 @@ COUNTRIES = {
         "label": "UK & Europe",
         "basename": "Aashish-Chhabra-CV-UK-Europe",
         "phones": ["phone_india"],
-        "max_tier": 1,
-        "expected_pages": 2,
+        "max_tier": 2,
+        "expected_pages": 3,
         "sections": ["summary", "experience", "skills", "credentials", "education"],
         "summary_heading": "PERSONAL PROFILE",
         "show_tools": False,
-        "font_scale": 1.12,
+        "font_scale": 1.16,
     },
 }
 

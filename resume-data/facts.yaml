@@ -30,8 +30,8 @@
 #
 # `tier` on a bullet controls which variants carry it:
 #   1 = every variant
-#   2 = fuller detail (India and Australia; the 2-page UK CV keeps tier 1 only)
-#   3 = the three-page formats only (India and Australia)
+#   2 = fuller detail (every variant)
+#   3 = finest detail (India and Australia only)
 # Which sections each country shows, and in what order, lives in
 # generate_resume.py (COUNTRIES), not here.
 
@@ -207,7 +207,7 @@ experience:
     bullets:
       - register_id: "R11/R12"
         tier: 1
-        text: "Sole administrator of the production Cloudera platform as it grew from about 15 to about 390 servers holding about 19 PB of Hadoop data: installation, configuration, upgrades, repairs and capacity growth, from operating-system and network faults through to what the business's data jobs needed."
+        text: "Sole administrator of the production Cloudera platform as it grew from about 15 to about 390 servers and about 19 PB of Hadoop data: installed, configured, upgraded and scaled it, and resolved problems from operating-system and network faults to data-job issues."
       - register_id: "R13/R14"
         tier: 1
         text: "Planned and worked on the migration from CDH 5.8 to CDP 7.1.6 with developers and operations, and planned and executed the replacement of the NameNode server with no business downtime."
