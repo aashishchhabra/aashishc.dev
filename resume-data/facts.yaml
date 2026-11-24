@@ -2,9 +2,9 @@
 #
 # This is the only place résumé facts get entered or corrected. Written against
 # the confidence-graded evidence register in the private career-history document
-# (Version 3, 11 Nov 2026); `register_id` traces each fact back to its register
-# row. Later corrections from the owner are also recorded here and are NOT yet
-# in that document:
+# (Version 4, 24 Nov 2026); `register_id` traces each fact back to its register
+# row ("owner-stated" bullets map to R46-R49 in version 4). Owner corrections
+# from November 2026, all now recorded in version 4:
 #   - OpenTelemetry was implemented for Kafka-as-a-Service observability.
 #   - OpenShift work is hands-on (Helm deployments, production troubleshooting,
 #     security-context hardening).
