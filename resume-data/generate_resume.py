@@ -11,7 +11,7 @@ Requires: pyyaml, reportlab, python-docx
 
 Each country is a genuinely different document (length, sections, order), per
 the conventions researched for that market:
-    India        2 pages  short summary, dense key-skills block, tools per role
+    India        3 pages  short summary, dense key-skills block, tools per role
     Australia    3 pages  work rights up front, key achievements, full role
                           detail, referees line
     UK & Europe  2 pages  titled as a CV, personal profile, tight bullets,
@@ -43,12 +43,12 @@ COUNTRIES = {
         "label": "India",
         "basename": "Aashish-Chhabra-Resume-India",
         "phones": ["phone_india"],
-        "max_tier": 2,
-        "expected_pages": 2,
+        "max_tier": 3,
+        "expected_pages": 3,
         "sections": ["summary", "key_skills", "experience", "credentials", "awards", "education"],
         "summary_heading": "PROFESSIONAL SUMMARY",
         "show_tools": True,
-        "font_scale": 0.97,
+        "font_scale": 1.16,
     },
     "australia": {
         "label": "Australia",
@@ -59,18 +59,18 @@ COUNTRIES = {
         "sections": ["summary", "key_achievements", "skills", "experience", "credentials", "awards", "education", "referees"],
         "summary_heading": "EXECUTIVE SUMMARY",
         "show_tools": True,
-        "font_scale": 1.06,
+        "font_scale": 1.08,
     },
     "uk_europe": {
         "label": "UK & Europe",
         "basename": "Aashish-Chhabra-CV-UK-Europe",
         "phones": ["phone_india"],
-        "max_tier": 2,
+        "max_tier": 1,
         "expected_pages": 2,
         "sections": ["summary", "experience", "skills", "credentials", "education"],
         "summary_heading": "PERSONAL PROFILE",
         "show_tools": False,
-        "font_scale": 1.04,
+        "font_scale": 1.12,
     },
 }
 

@@ -54,7 +54,7 @@ If the domain ever moves to a new registrar/DNS provider, or Pages needs to be r
 - `shared-tokens.css` — theme variables and base resets shared by every page
 - `resume-data/facts.yaml` — single source of truth for résumé content, tagged against the private career-history evidence register
 - `resume-data/generate_resume.py` — generator (reportlab + python-docx); run `python3 resume-data/generate_resume.py` after editing `facts.yaml` to regenerate every PDF and Word file
-- `Aashish-Chhabra-Resume-India`, `Aashish-Chhabra-Resume-Australia`, `Aashish-Chhabra-CV-UK-Europe` (each as `.pdf` and `.docx`) — the generated résumés: India 2 pages, Australia 3 pages, UK & Europe a 2-page CV
+- `Aashish-Chhabra-Resume-India`, `Aashish-Chhabra-Resume-Australia`, `Aashish-Chhabra-CV-UK-Europe` (each as `.pdf` and `.docx`) — the generated résumés: India 3 pages, Australia 3 pages, UK & Europe a 2-page CV
 - `og-image.png` — social share preview image (1200×630)
 - `CNAME` — custom domain for GitHub Pages
 - `README.md` — this file
